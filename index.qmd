@@ -1,0 +1,48 @@
+---
+title: "Running LLMs on HPC"
+format: html
+---
+
+# Welcome
+
+Welcome to **Running LLMs on HPC**!  
+This site is a practical guide for deploying, managing, and analyzing large language models (LLMs) using the Vlaams Supercomputer (VSC).
+
+---
+
+## What You'll Find Here
+
+- **Project Overview:**  
+  Understand the goals and scope of this project.
+
+- **HPC & LLM Basics:**  
+  Learn foundational concepts about high-performance computing and LLMs.
+
+- **Environment Setup:**  
+  Step-by-step instructions for setting up your VSC environment, downloading models, and managing dependencies.
+
+- **Running Jobs:**  
+  How to launch SLURM jobs, organize scripts, and capture logs/output.
+
+- **Best Practices:**  
+  Proven tips for efficient, reproducible, and scalable research on HPC.
+
+---
+
+## Quick Start
+
+1. **Read the Project Overview** to understand the workflow.
+2. **Set up your environment** following the Environment Setup section.
+3. **Submit your first SLURM job** using the templates provided.
+4. **Explore Best Practices** for optimizing your workflow.
+
+---
+
+## About VSC
+
+The **Vlaams Supercomputer Center (VSC)** provides powerful computing resources for research and innovation in Flanders.  
+Learn more: [VSC User Portal](https://www.vscentrum.be/en/)
+
+---
+
+_Navigate using the sidebar to get started!_
