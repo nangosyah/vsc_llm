@@ -1,0 +1,172 @@
+/*-- scss:defaults --*/
+
+$theme-spotify-green: #1DB954;
+$theme-lighter-green: #1ed760;
+$theme-dark-purple: #7D3C98;
+$theme-light-purple: #e3cbf2;
+$theme-darkest-gray: #191414;
+$theme-medium-gray: #282828;
+$theme-light-gray: #f4f4f4;
+$theme-text-color: #191414; // use dark text for clarity
+
+@import url('https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@700&family=Montserrat&display=swap');
+
+$font-family-sans-serif: 'Montserrat', sans-serif;
+$footer-bg: $theme-spotify-green;
+$font-size-root: 14px;
+$link-color: $theme-spotify-green;
+$sidebar-bg: white;
+$sidebar-fg: $theme-darkest-gray;
+$code-block-bg: $theme-light-gray;
+
+/*-- scss:rules --*/
+
+/* Tables */
+table {
+  display: block;
+  max-width: 100%;
+  overflow: auto;
+  background: white;
+}
+td {
+  min-width: 120px;
+}
+
+/* Clean, clear backgrounds */
+body {
+  background-color: white !important;
+  color: $theme-text-color;
+}
+
+.card {
+  --bs-card-border-width: 0px; 
+  --bs-card-bg: white !important;
+  background: white !important;
+}
+.card-body {
+  padding: 0px;
+  color: $theme-text-color !important;
+  background: white !important;
+}
+
+.navbar {
+  background-color: white !important;
+  color: $theme-text-color;
+  border-bottom: 1px solid #eaeaea;
+}
+
+:root {
+  --bs-body-bg: white !important;
+  --bs-card-bg: white !important;
+}
+
+/* Scrollbar: light, but accent on thumb */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+::-webkit-scrollbar-track {
+    background: #eee; 
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: $theme-spotify-green;
+    border-radius: 10px;
+    border: 3px solid #eee;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: $theme-lighter-green;
+}
+::-webkit-scrollbar-corner {
+    background: #eee;
+}
+
+/* Dropdowns: clean */
+select { 
+    background-color: white !important;
+    padding: 8px;
+    border: 1px solid $theme-spotify-green !important;
+    border-radius: 4px;
+    width: 200px;
+    color: $theme-text-color;
+}
+select option { 
+    background-color: white !important;
+    color: $theme-text-color !important;
+}
+select option:hover { 
+  background-color: $theme-light-purple !important;
+}
+
+/* Miscellaneous: headings, links, sidebar */
+h1, h2, h3, h4, h5, h6, p {
+  color: $theme-text-color;
+}
+
+a {
+  text-decoration: none;
+  color: $link-color;
+}
+
+a:hover {
+  color: $theme-dark-purple;
+}
+
+/* Sidebar: clear background, readable text */
+.sidebar {
+  background: white !important;
+}
+.sidebar-title {
+  color: $theme-darkest-gray;
+  font-weight: bold;
+}
+div.sidebar-item-container .active {
+  color: $theme-spotify-green;
+  font-weight: bold;
+}
+div.sidebar-item-container {
+  color: $theme-darkest-gray;
+}
+div.sidebar-item-container:hover {
+  color: $theme-dark-purple;
+}
+
+/* ToC in sidebar */
+.sidebar .toc-actions ul li a {
+  color: $theme-darkest-gray !important;
+}
+
+/* "Next page" navigation */
+.nav-page a {
+  color: $theme-spotify-green;
+}
+
+/* Author block */
+#title-block-header.quarto-title-block.default .quarto-title-meta-heading {
+  color: $theme-dark-purple;
+}
+
+/* gt table tweaks */
+.gt_footnote_marks sup {
+  font-style: normal;
+}
+.gt_table img {
+  object-fit: contain;
+}
+
+/* Misc tweaks */
+.navbar-title {
+  font-weight: bold;
+}
+
+/* Remove dark backgrounds from widgets */
+.TrackWidget_widgetContainer__gADzr,
+div.html-fill-item.html-fill-container .custom-iframe {
+  background: transparent !important;
+}
+
+/* Remove shadow, border if you want ultra minimal */
+.card, .navbar, .sidebar {
+  box-shadow: none !important;
+  border: none !important;
+}

@@ -1,0 +1,48 @@
+---
+title: "Running LLMs on HPC for Clinical Symptom Extraction"
+author: "Tom Wellard-Nangosyah"
+date: "2025-07-20"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: true
+execute:
+  freeze: auto
+---
+
+# 👋 Project Overview
+
+## Research Objective
+This project demonstrates a scalable approach to generating patient-reported symptom lists for medical conditions using open Large Language Models (LLMs) on the **Vlaams Supercomputer (VSC)**. For a curated set of diseases (ICD codes) sourced from the *MIMIC-IV* clinical database, we systematically prompt LLMs to produce **exactly 10 common symptoms** per condition. The structured outputs (JSONL/Parquet) are prepared for downstream analysis including frequency mapping and ontology alignment.
+
+## Pedagogical Value
+Through this workflow, researchers will learn:
+- HPC job orchestration using SLURM arrays
+- Batch processing of LLM queries with error handling
+- Structured output extraction (JSONL/Parquet)
+- Reproducible research practices
+- Ethical considerations for clinical NLP
+
+---
+
+## 1. Data Source: MIMIC-IV
+
+### Overview
+**MIMIC-IV** (Medical Information Mart for Intensive Care IV) is a de-identified, publicly accessible database of ICU patient records from Beth Israel Deaconess Medical Center, containing:
+- Clinical documentation
+- Diagnostic codes (ICD-9/10)
+- Vital signs and laboratory measurements
+- Medication records
+
+### Access Requirements
+1. Completion of CITI training or equivalent
+2. Institutional approval via PhysioNet
+3. Compliance with Data Use Agreement ([physionet.org/content/mimiciv](https://physionet.org/content/mimiciv))
+
+### Implementation Note
+Only **disease names and ICD codes** are submitted to LLMs. No patient-level data is transmitted. Source version (`mimic-iv-2.2`) is documented in `data/README.md`.
+
+---
+
+

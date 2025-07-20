@@ -1,0 +1,90 @@
+---
+title: "Basics of Running Jobs on VSC"
+format: html
+---
+
+# Credits on VSC
+
+- VSC uses a credit-based system for resource management.
+    - Credits are consumed according to CPU/GPU hours and memory usage.
+- How to check your credit balance:
+    - Use the `vsc-accounting` command in the terminal.
+    - Or check online: [VSC Accounting Dashboard](https://www.vscentrum.be/nl/accounting)
+- Credits are requested via your institution.
+    - See the [resource application guide](https://www.vscentrum.be/en/access/vsc-projects).
+
+---
+
+# SLURM Jobs
+
+- All computation on VSC is managed by the SLURM workload manager.
+    - Prepare a SLURM batch script with resource requests and commands.
+- Example SLURM script:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=llm-symptoms
+    #SBATCH --output=logs/%x-%j.out
+    #SBATCH --partition=normal
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=8
+    #SBATCH --mem=32G
+    #SBATCH --time=02:00:00
+
+    module load Python/3.10.4-GCCcore-11.3.0
+    python scripts/generate_symptoms.py --input data/icd_codes.csv --output data/symptoms_llm_output.jsonl
+    ```
+
+- Submit your job:
+    ```bash
+    sbatch run_job.sh
+    ```
+- Monitor job status:
+    ```bash
+    squeue -u $USER
+    ```
+- More info: [VSC SLURM Jobs](https://www.vscentrum.be/en/user-info/batch-jobs)
+
+---
+
+# VSC File System & Architecture
+
+- **Where does your data live?**
+    - `$HOME`: For code, scripts, and small files (backed up).
+    - `$VSC_DATA`: For large datasets and results (not backed up by default).
+    - `$VSC_SCRATCH`: For temporary files and outputs (fast, auto-purged).
+    - See [Data Storage at VSC](https://www.vscentrum.be/en/user-info/files-and-data)
+
+- **Where does your code live?**
+    - Usually in `$HOME` or in `$VSC_DATA/scripts`.
+    - Use version control (e.g., Git) for code management.
+
+- **Where does your terminal/session live?**
+    - Connect via SSH:
+        ```bash
+        ssh <vsc_user>@login.hpc.ugent.be
+        ```
+        - Or see [Accessing VSC](https://www.vscentrum.be/en/user-info/accessing-the-vsc)
+    - Only use the login node for setup, file transfer, and job submission.
+    - Run compute jobs via SLURM, not directly on the login node.
+
+---
+
+# Useful Links
+
+- [VSC Portal](https://www.vscentrum.be/en/)
+- [VSC Documentation](https://docs.vscentrum.be/)
+- [Batch Jobs & SLURM](https://www.vscentrum.be/en/user-info/batch-jobs)
+- [Data Storage](https://www.vscentrum.be/en/user-info/files-and-data)
+- [Requesting Resources](https://www.vscentrum.be/en/access/vsc-projects)
+- [VSC Support](https://www.vscentrum.be/en/user-info/support)
+
+---
+
+# Tips
+
+- Organize your project with separate folders for code, data, and logs.
+- Monitor your credit and storage usage.
+- Contact your institution’s VSC support desk for advanced assistance.
+

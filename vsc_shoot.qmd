@@ -1,0 +1,91 @@
+---
+title: "Submitting Jobs with SLURM"
+format: html
+---
+
+## 🎯 Goal
+
+Learn how to create and submit SLURM jobs on the KU Leuven VSC cluster. This includes:
+
+- Writing SLURM job scripts
+- Running Python code in a job
+- Downloading models with Ollama
+
+---
+
+## 🔑 Key Questions
+
+- How do I write a SLURM job script?
+- How do I run a Python script in a SLURM job?
+- What does a complete SLURM setup look like for running or downloading models?
+
+---
+
+## 🛠️ Structure of a SLURM Script
+
+SLURM job scripts are Bash files with `#SBATCH` directives that specify:
+
+- Job name and resources (e.g., time, memory, GPUs)
+- Output logs
+- Environment setup (e.g., module load, conda activation)
+- The command(s) to execute
+
+---
+
+## ✍️ Template: Running a Python Script Using Ollama
+
+```bash
+#!/bin/bash -l
+#SBATCH --job-name=ollama_icd9cm_symptoms
+#SBATCH --cluster=wice
+#SBATCH --partition=gpu_h100
+#SBATCH --gpus-per-node=1
+#SBATCH --time=02:00:00
+#SBATCH --mem=128G
+#SBATCH --account=lp_h_dv_nlp
+#SBATCH --output=/data/leuven/377/vsc37712/results/icd_9cm_symptoms_deepseek70b%j.out
+
+# Set environment variables
+export OLLAMA_MODELS=/staging/leuven/stg_00191/ollama_models
+export OLLAMA_HOST=127.0.0.1:37712
+export OLLAMA_PORT=37712
+
+# Change to working directory
+cd /data/leuven/377/vsc37712/test_data
+
+# Activate conda environment
+source /data/leuven/377/vsc37712/miniconda3/bin/activate ollama_venv
+
+# Specify GPU usage
+export CUDA_VISIBLE_DEVICES=0
+
+# Start Ollama server (logs for debugging)
+/data/leuven/377/vsc37712/ollama/bin/ollama serve > /data/leuven/377/vsc37712/results/ollama_server_%j.log 2>&1 &
+
+# Wait for Ollama to be ready
+for i in {1..15}; do
+    if curl -s http://127.0.0.1:37712/api/tags > /dev/null; then
+        echo "Ollama server is up!"
+        break
+    fi
+    sleep 2
+done
+
+if ! curl -s http://127.0.0.1:37712/api/tags > /dev/null; then
+    echo "Ollama server did not start correctly." >&2
+    exit 1
+fi
+
+# Run Python script
+python /data/leuven/377/vsc37712/python_scripts/icd_9cm_symptoms_deepseek70b.py
+
+echo "SLURM job finished at $(date)"
+```
+
+### ⚡ How to Submit the Job
+
+```bash
+sbatch run_ollama_icd9cm.slurm
+```
+
+---

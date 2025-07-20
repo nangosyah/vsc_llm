@@ -1,0 +1,224 @@
+---
+title: "Accessing VSC & Understanding Credits / Quotas"
+format: html
+---
+
+## 🎯 Goal
+
+Set up a **minimal working development environment** both locally and on VSC (KU Leuven HPC), and install required language models (e.g. Ollama). Ensure that you can run dry tests and verify installations.
+
+---
+
+## 🔑 Key Questions
+
+- **What folders should I create?**  
+  - Create a structured workspace, both locally and on the cluster:
+    ```
+    📁 /Users/you/your_project/
+      └── 📁 code/
+      └── 📁 data/
+      └── 📁 models/
+      └── 📁 logs/
+    ```
+
+- **Which minimal dependencies do I install?**  
+  - On both environments, install:
+    - `conda` or `miniconda`
+    - `tqdm`, `requests`, `python-dotenv` (as needed per script)
+    - `ollama` (via Slurm on VSC)
+
+- **How do I store the prompt template?**  
+  - Save it as a separate `.txt` or `.json` file in the `/code` directory.
+  - Alternatively, embed it inside your Python code using a Jinja2-style template string.
+
+---
+
+## 🖥️ Local Setup (Mac / Linux)
+
+### ✅ Installing Miniconda
+
+```bash
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+source ~/.bashrc
+conda --version  # Verify installation
+```
+
+### ✅ Create and activate environment
+
+```bash
+conda create -n ollama_venv python=3.10 -y
+conda activate ollama_venv
+```
+
+### ✅ Install required packages
+
+```bash
+conda install "tqdm"
+pip install python-dotenv
+```
+
+### ✅ Create `.env` file
+
+```bash
+cd ~/your_project/code
+nano .env
+```
+
+Add your OpenAI key:
+```
+OPENAI_API_KEY=sk-your_openai_key_here
+```
+
+---
+
+## 🖧 VSC Setup (HPC KU Leuven)
+
+### 🔐 SSH Key Setup
+
+```bash
+ssh-keygen -t ed25519 -C "your_email@domain.com"
+# Follow prompts to save key and add password
+ssh-copy-id vscXXXX@login.hpc.kuleuven.be
+```
+
+Afterward, go to the [firewall page](https://firewall.vscentrum.be) and complete the authorization.
+
+---
+
+### 🏗️ Preparing the Environment
+
+1. **Enable conda:**
+    ```bash
+    source /data/leuven/377/vscXXXX/miniconda3/etc/profile.d/conda.sh
+    ```
+
+2. **Activate environment:**
+    ```bash
+    module load Python/3.10.4-GCCcore-11.3.0
+    conda activate ollama_venv
+    ```
+
+3. **Install packages:**
+    ```bash
+    conda install "tqdm"
+    ```
+
+4. **Test installation:**
+    ```bash
+    python -c "from tqdm import tqdm; print('tqdm is installed')"
+    ```
+
+---
+
+## 🤖 Downloading & Running Ollama Models (via SLURM)
+
+### 🛠️ Steps to Download Ollama Model
+
+```bash
+cd /data/leuven/377/vscXXXX/
+ls -l ollama_setup.slurm
+sbatch ollama_setup.slurm
+squeue -u $USER     # Check job status
+tail -f ollama_download.out  # Watch live logs
+```
+
+---
+
+### 🧪 Running Ollama Server on HPC
+
+```bash
+cd $VSC_DATA
+/data/leuven/377/vscXXXX/ollama/bin/ollama serve &
+export OLLAMA_MODELS=/staging/leuven/stg_00191/ollama_models
+/data/leuven/377/vscXXXX/ollama/bin/ollama list  # View installed models
+pkill ollama  # Stop the server
+```
+
+---
+
+## ✅ Summary
+
+- SSH + Conda + Slurm = functional dev + deployment setup.
+- You can now test models either **locally** or **via VSC**.
+- Ensure the `.env` is stored securely and not committed to Git.
+
+---
+
+## 🎯 Goal
+
+Learn how to create and submit SLURM jobs on the KU Leuven VSC cluster. This includes:
+
+- Downloading models with Ollama
+
+
+## 🤖 Template: Downloading a Model with Ollama via SLURM
+
+```bash
+#!/bin/bash -l
+#SBATCH --cluster=wice
+#SBATCH --partition=batch_sapphirerapids
+#SBATCH --time=02:00:00
+#SBATCH --mem=128G
+#SBATCH --account=lp_h_dv_nlp
+#SBATCH --output=ollama_download.out
+
+# Set model location and port
+export OLLAMA_MODELS=/staging/leuven/stg_00191/ollama_models
+export OLLAMA_HOST=127.0.0.1:37712
+
+# Start Ollama server
+/data/leuven/377/vsc37712/ollama/bin/ollama serve &
+
+# Wait until server is active
+sleep 15
+
+# Pull the desired model
+/data/leuven/377/vsc37712/ollama/bin/ollama pull deepseek-r1:70b
+
+# Wait for download to complete
+sleep 600
+```
+
+### ⚡ How to Submit the Job
+
+```bash
+sbatch ollama_setup.slurm
+```
+
+---
+
+## 📁 Folder Organization Tip
+
+Organize your files like so:
+
+```
+/data/leuven/377/vscXXXX/
+├── slurm_scripts/
+│   ├── run_model.slurm
+│   └── ollama_setup.slurm
+├── python_scripts/
+│   └── icd_9cm_symptoms_deepseek70b.py
+├── results/
+│   └── *.out
+└── ollama/
+```
+
+---
+
+## 📄 Summary
+
+- Use SLURM scripts to manage resources and control execution.
+- Include robust checks to confirm servers like Ollama are active.
+- Log outputs for easy debugging.
+- Separate model download and inference workflows into distinct scripts.
+
+---
+
+## ✅ Next Step
+
+Test the SLURM scripts with small jobs to verify functionality. Then scale up to full model runs and analysis batches.
+
+## 🧩 Next Step
+
+Proceed to testing your local script with Ollama/OpenAI using dummy prompts. Then, optimize for batch runs on VSC.
