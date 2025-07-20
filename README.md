@@ -1,4 +1,4 @@
-# Patient-Reported Symptom List Generation Using LLMs on VSC
+# Running LLMs on HPC for Clinical Symptom Extraction
 
 ## Project Overview
 
