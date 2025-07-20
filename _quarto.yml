@@ -5,18 +5,17 @@ website:
   title: "Running LLMs on HPC"
   sidebar:
     contents:
-      - href: index.qmd
-        text: Home
       - href: vsc_about.qmd
-        text: Project Overview
+        text: Home
       - href: vsc_basics.qmd
         text: HPC & LLM Basics
       - href: vsc_setup.qmd
         text: Environment Setup
       - href: vsc_shoot.qmd
-        text: Running Jobs & Logging
+        text: Running Jobs
       - href: vsc_jobs.qmd
-        text: Modeling Best Practices
+        text: Best Practices
+  
 
 format:
   html:

@@ -1,0 +1,230 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Running LLMs on HPC for Clinical Symptom Extraction",
+    "section": "",
+    "text": "This project demonstrates a scalable approach to generating patient-reported symptom lists for medical conditions using open Large Language Models (LLMs) on the Vlaams Supercomputer (VSC). For a curated set of diseases (ICD codes) sourced from the MIMIC-IV clinical database, we systematically prompt LLMs to produce exactly 10 common symptoms per condition. The structured outputs (JSONL/Parquet) are prepared for downstream analysis including frequency mapping and ontology alignment.\n\n\n\nThrough this workflow, researchers will learn: - HPC job orchestration using SLURM arrays - Batch processing of LLM queries with error handling - Structured output extraction (JSONL/Parquet) - Reproducible research practices - Ethical considerations for clinical NLP\n\n\n\n\n\n\nMIMIC-IV (Medical Information Mart for Intensive Care IV) is a de-identified, publicly accessible database of ICU patient records from Beth Israel Deaconess Medical Center, containing: - Clinical documentation - Diagnostic codes (ICD-9/10) - Vital signs and laboratory measurements - Medication records\n\n\n\n\nCompletion of CITI training or equivalent\nInstitutional approval via PhysioNet\nCompliance with Data Use Agreement (physionet.org/content/mimiciv)\n\n\n\n\nOnly disease names and ICD codes are submitted to LLMs. No patient-level data is transmitted. Source version (mimic-iv-2.2) is documented in data/README.md."
+  },
+  {
+    "objectID": "about.html#research-objective",
+    "href": "about.html#research-objective",
+    "title": "Running LLMs on HPC for Clinical Symptom Extraction",
+    "section": "",
+    "text": "This project demonstrates a scalable approach to generating patient-reported symptom lists for medical conditions using open Large Language Models (LLMs) on the Vlaams Supercomputer (VSC). For a curated set of diseases (ICD codes) sourced from the MIMIC-IV clinical database, we systematically prompt LLMs to produce exactly 10 common symptoms per condition. The structured outputs (JSONL/Parquet) are prepared for downstream analysis including frequency mapping and ontology alignment."
+  },
+  {
+    "objectID": "about.html#pedagogical-value",
+    "href": "about.html#pedagogical-value",
+    "title": "Running LLMs on HPC for Clinical Symptom Extraction",
+    "section": "",
+    "text": "Through this workflow, researchers will learn: - HPC job orchestration using SLURM arrays - Batch processing of LLM queries with error handling - Structured output extraction (JSONL/Parquet) - Reproducible research practices - Ethical considerations for clinical NLP"
+  },
+  {
+    "objectID": "about.html#data-source-mimic-iv",
+    "href": "about.html#data-source-mimic-iv",
+    "title": "Running LLMs on HPC for Clinical Symptom Extraction",
+    "section": "",
+    "text": "MIMIC-IV (Medical Information Mart for Intensive Care IV) is a de-identified, publicly accessible database of ICU patient records from Beth Israel Deaconess Medical Center, containing: - Clinical documentation - Diagnostic codes (ICD-9/10) - Vital signs and laboratory measurements - Medication records\n\n\n\n\nCompletion of CITI training or equivalent\nInstitutional approval via PhysioNet\nCompliance with Data Use Agreement (physionet.org/content/mimiciv)\n\n\n\n\nOnly disease names and ICD codes are submitted to LLMs. No patient-level data is transmitted. Source version (mimic-iv-2.2) is documented in data/README.md."
+  },
+  {
+    "objectID": "vsc_jobs.html",
+    "href": "vsc_jobs.html",
+    "title": "Best Practices for Running Models on HPC",
+    "section": "",
+    "text": "Introduction\n\nHigh-Performance Computing (HPC) enables efficient training and evaluation of large models.\nFollowing best practices maximizes resource usage, minimizes job failures, and ensures reproducibility.\n\n\n\n\n1. Resource Management\n\nRequest only the resources you need (CPUs, GPUs, memory, wall time).\nUse benchmarking and profiling to estimate resource requirements.\nMonitor your jobs and adjust future requests accordingly.\nRelease resources as soon as jobs finish.\n\n\n\n\n2. Job Scheduling and SLURM Usage\n\nUse SLURM array jobs for large-scale parameter sweeps or cross-validation.\nName your jobs descriptively with #SBATCH --job-name.\nOrganize job outputs and logs using #SBATCH --output and subfolders.\nRegularly check job status (squeue -u $USER) and manage queued/running jobs (scancel).\n\n\n\n\n3. Data Handling\n\nStore large datasets in the appropriate HPC data storage (e.g., $VSC_DATA).\nAvoid reading/writing directly to your home directory for big files.\nUse the scratch directory ($VSC_SCRATCH) for temporary files and clean up after jobs finish.\nPre-stage data before computation; transfer results after job completion.\n\n\n\n\n4. Code and Environment Management\n\nUse environment modules or containers to manage dependencies.\nDocument your environment (module load commands, requirements.txt, etc.).\nUse version control (e.g., Git) for all code.\nTest your code with small jobs before scaling up.\n\n\n\n\n5. Reproducibility\n\nRecord job parameters, random seeds, software versions, and output locations.\nStore SLURM scripts and configuration files with your results.\nUse automated logging and metadata files.\n\n\n\n\n6. Error Handling and Debugging\n\nUse --mail-type=FAIL in SLURM to get failure notifications.\nCheck logs regularly for errors and warnings.\nStart with interactive sessions for debugging before submitting large jobs.\nWrite jobs to fail fast if requirements are not met (e.g., missing data or modules).\n\n\n\n\n7. Collaboration and Documentation\n\nDocument all steps in a README or as Quarto/RMarkdown notebooks.\nOrganize scripts, configs, and data in clear directories.\nShare and backup results promptly.\n\n\n\n\nUseful Links\n\nVSC User Documentation\nSLURM Job Submission Guide\nData Storage Guidelines\n\n\n\n\nTips\n\nAlways do a test run before scaling up.\nClean up your data and scratch spaces.\nCommunicate with your HPC support team for questions or unusual errors.",
+    "crumbs": [
+      "Modeling Best Practices"
+    ]
+  },
+  {
+    "objectID": "vsc_basics.html",
+    "href": "vsc_basics.html",
+    "title": "Basics of Running Jobs on VSC",
+    "section": "",
+    "text": "Credits on VSC\n\nVSC uses a credit-based system for resource management.\n\nCredits are consumed according to CPU/GPU hours and memory usage.\n\nHow to check your credit balance:\n\nUse the vsc-accounting command in the terminal.\nOr check online: VSC Accounting Dashboard\n\nCredits are requested via your institution.\n\nSee the resource application guide.\n\n\n\n\n\nSLURM Jobs\n\nAll computation on VSC is managed by the SLURM workload manager.\n\nPrepare a SLURM batch script with resource requests and commands.\n\nExample SLURM script:\n#!/bin/bash\n#SBATCH --job-name=llm-symptoms\n#SBATCH --output=logs/%x-%j.out\n#SBATCH --partition=normal\n#SBATCH --nodes=1\n#SBATCH --ntasks=1\n#SBATCH --cpus-per-task=8\n#SBATCH --mem=32G\n#SBATCH --time=02:00:00\n\nmodule load Python/3.10.4-GCCcore-11.3.0\npython scripts/generate_symptoms.py --input data/icd_codes.csv --output data/symptoms_llm_output.jsonl\nSubmit your job: bash     sbatch run_job.sh\nMonitor job status: bash     squeue -u $USER\nMore info: VSC SLURM Jobs\n\n\n\n\nVSC File System & Architecture\n\nWhere does your data live?\n\n$HOME: For code, scripts, and small files (backed up).\n$VSC_DATA: For large datasets and results (not backed up by default).\n$VSC_SCRATCH: For temporary files and outputs (fast, auto-purged).\nSee Data Storage at VSC\n\nWhere does your code live?\n\nUsually in $HOME or in $VSC_DATA/scripts.\nUse version control (e.g., Git) for code management.\n\nWhere does your terminal/session live?\n\nConnect via SSH: bash       ssh &lt;vsc_user&gt;@login.hpc.ugent.be\n\nOr see Accessing VSC\n\nOnly use the login node for setup, file transfer, and job submission.\nRun compute jobs via SLURM, not directly on the login node.\n\n\n\n\n\nUseful Links\n\nVSC Portal\nVSC Documentation\nBatch Jobs & SLURM\nData Storage\nRequesting Resources\nVSC Support\n\n\n\n\nTips\n\nOrganize your project with separate folders for code, data, and logs.\nMonitor your credit and storage usage.\nContact your institution’s VSC support desk for advanced assistance.",
+    "crumbs": [
+      "HPC & LLM Basics"
+    ]
+  },
+  {
+    "objectID": "vsc_shoot.html",
+    "href": "vsc_shoot.html",
+    "title": "Submitting Jobs with SLURM",
+    "section": "",
+    "text": "Learn how to create and submit SLURM jobs on the KU Leuven VSC cluster. This includes:\n\nWriting SLURM job scripts\nRunning Python code in a job\nDownloading models with Ollama",
+    "crumbs": [
+      "Running Jobs"
+    ]
+  },
+  {
+    "objectID": "vsc_shoot.html#goal",
+    "href": "vsc_shoot.html#goal",
+    "title": "Submitting Jobs with SLURM",
+    "section": "",
+    "text": "Learn how to create and submit SLURM jobs on the KU Leuven VSC cluster. This includes:\n\nWriting SLURM job scripts\nRunning Python code in a job\nDownloading models with Ollama",
+    "crumbs": [
+      "Running Jobs"
+    ]
+  },
+  {
+    "objectID": "vsc_shoot.html#key-questions",
+    "href": "vsc_shoot.html#key-questions",
+    "title": "Submitting Jobs with SLURM",
+    "section": "🔑 Key Questions",
+    "text": "🔑 Key Questions\n\nHow do I write a SLURM job script?\nHow do I run a Python script in a SLURM job?\nWhat does a complete SLURM setup look like for running or downloading models?",
+    "crumbs": [
+      "Running Jobs"
+    ]
+  },
+  {
+    "objectID": "vsc_shoot.html#structure-of-a-slurm-script",
+    "href": "vsc_shoot.html#structure-of-a-slurm-script",
+    "title": "Submitting Jobs with SLURM",
+    "section": "🛠️ Structure of a SLURM Script",
+    "text": "🛠️ Structure of a SLURM Script\nSLURM job scripts are Bash files with #SBATCH directives that specify:\n\nJob name and resources (e.g., time, memory, GPUs)\nOutput logs\nEnvironment setup (e.g., module load, conda activation)\nThe command(s) to execute",
+    "crumbs": [
+      "Running Jobs"
+    ]
+  },
+  {
+    "objectID": "vsc_shoot.html#template-running-a-python-script-using-ollama",
+    "href": "vsc_shoot.html#template-running-a-python-script-using-ollama",
+    "title": "Submitting Jobs with SLURM",
+    "section": "✍️ Template: Running a Python Script Using Ollama",
+    "text": "✍️ Template: Running a Python Script Using Ollama\n#!/bin/bash -l\n#SBATCH --job-name=ollama_icd9cm_symptoms\n#SBATCH --cluster=wice\n#SBATCH --partition=gpu_h100\n#SBATCH --gpus-per-node=1\n#SBATCH --time=02:00:00\n#SBATCH --mem=128G\n#SBATCH --account=lp_h_dv_nlp\n#SBATCH --output=/data/leuven/377/vsc37712/results/icd_9cm_symptoms_deepseek70b%j.out\n\n# Set environment variables\nexport OLLAMA_MODELS=/staging/leuven/stg_00191/ollama_models\nexport OLLAMA_HOST=127.0.0.1:37712\nexport OLLAMA_PORT=37712\n\n# Change to working directory\ncd /data/leuven/377/vsc37712/test_data\n\n# Activate conda environment\nsource /data/leuven/377/vsc37712/miniconda3/bin/activate ollama_venv\n\n# Specify GPU usage\nexport CUDA_VISIBLE_DEVICES=0\n\n# Start Ollama server (logs for debugging)\n/data/leuven/377/vsc37712/ollama/bin/ollama serve &gt; /data/leuven/377/vsc37712/results/ollama_server_%j.log 2&gt;&1 &\n\n# Wait for Ollama to be ready\nfor i in {1..15}; do\n    if curl -s http://127.0.0.1:37712/api/tags &gt; /dev/null; then\n        echo \"Ollama server is up!\"\n        break\n    fi\n    sleep 2\ndone\n\nif ! curl -s http://127.0.0.1:37712/api/tags &gt; /dev/null; then\n    echo \"Ollama server did not start correctly.\" &gt;&2\n    exit 1\nfi\n\n# Run Python script\npython /data/leuven/377/vsc37712/python_scripts/icd_9cm_symptoms_deepseek70b.py\n\necho \"SLURM job finished at $(date)\"\n\n⚡ How to Submit the Job\nsbatch run_ollama_icd9cm.slurm",
+    "crumbs": [
+      "Running Jobs"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html",
+    "href": "vsc_setup.html",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "",
+    "text": "Set up a minimal working development environment both locally and on VSC (KU Leuven HPC), and install required language models (e.g. Ollama). Ensure that you can run dry tests and verify installations.",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#goal",
+    "href": "vsc_setup.html#goal",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "",
+    "text": "Set up a minimal working development environment both locally and on VSC (KU Leuven HPC), and install required language models (e.g. Ollama). Ensure that you can run dry tests and verify installations.",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#key-questions",
+    "href": "vsc_setup.html#key-questions",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "🔑 Key Questions",
+    "text": "🔑 Key Questions\n\nWhat folders should I create?\n\nCreate a structured workspace, both locally and on the cluster:\n📁 /Users/you/your_project/\n  └── 📁 code/\n  └── 📁 data/\n  └── 📁 models/\n  └── 📁 logs/\n\nWhich minimal dependencies do I install?\n\nOn both environments, install:\n\nconda or miniconda\ntqdm, requests, python-dotenv (as needed per script)\nollama (via Slurm on VSC)\n\n\nHow do I store the prompt template?\n\nSave it as a separate .txt or .json file in the /code directory.\nAlternatively, embed it inside your Python code using a Jinja2-style template string.",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#local-setup-mac-linux",
+    "href": "vsc_setup.html#local-setup-mac-linux",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "🖥️ Local Setup (Mac / Linux)",
+    "text": "🖥️ Local Setup (Mac / Linux)\n\n✅ Installing Miniconda\nwget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh\nbash Miniconda3-latest-Linux-x86_64.sh\nsource ~/.bashrc\nconda --version  # Verify installation\n\n\n✅ Create and activate environment\nconda create -n ollama_venv python=3.10 -y\nconda activate ollama_venv\n\n\n✅ Install required packages\nconda install \"tqdm\"\npip install python-dotenv\n\n\n✅ Create .env file\ncd ~/your_project/code\nnano .env\nAdd your OpenAI key:\nOPENAI_API_KEY=sk-your_openai_key_here",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#vsc-setup-hpc-ku-leuven",
+    "href": "vsc_setup.html#vsc-setup-hpc-ku-leuven",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "🖧 VSC Setup (HPC KU Leuven)",
+    "text": "🖧 VSC Setup (HPC KU Leuven)\n\n🔐 SSH Key Setup\nssh-keygen -t ed25519 -C \"your_email@domain.com\"\n# Follow prompts to save key and add password\nssh-copy-id vscXXXX@login.hpc.kuleuven.be\nAfterward, go to the firewall page and complete the authorization.\n\n\n\n🏗️ Preparing the Environment\n\nEnable conda: bash     source /data/leuven/377/vscXXXX/miniconda3/etc/profile.d/conda.sh\nActivate environment: bash     module load Python/3.10.4-GCCcore-11.3.0     conda activate ollama_venv\nInstall packages: bash     conda install \"tqdm\"\nTest installation: bash     python -c \"from tqdm import tqdm; print('tqdm is installed')\"",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#downloading-running-ollama-models-via-slurm",
+    "href": "vsc_setup.html#downloading-running-ollama-models-via-slurm",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "🤖 Downloading & Running Ollama Models (via SLURM)",
+    "text": "🤖 Downloading & Running Ollama Models (via SLURM)\n\n🛠️ Steps to Download Ollama Model\ncd /data/leuven/377/vscXXXX/\nls -l ollama_setup.slurm\nsbatch ollama_setup.slurm\nsqueue -u $USER     # Check job status\ntail -f ollama_download.out  # Watch live logs\n\n\n\n🧪 Running Ollama Server on HPC\ncd $VSC_DATA\n/data/leuven/377/vscXXXX/ollama/bin/ollama serve &\nexport OLLAMA_MODELS=/staging/leuven/stg_00191/ollama_models\n/data/leuven/377/vscXXXX/ollama/bin/ollama list  # View installed models\npkill ollama  # Stop the server",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#summary",
+    "href": "vsc_setup.html#summary",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "✅ Summary",
+    "text": "✅ Summary\n\nSSH + Conda + Slurm = functional dev + deployment setup.\nYou can now test models either locally or via VSC.\nEnsure the .env is stored securely and not committed to Git.",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#goal-1",
+    "href": "vsc_setup.html#goal-1",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "🎯 Goal",
+    "text": "🎯 Goal\nLearn how to create and submit SLURM jobs on the KU Leuven VSC cluster. This includes:\n\nDownloading models with Ollama",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#template-downloading-a-model-with-ollama-via-slurm",
+    "href": "vsc_setup.html#template-downloading-a-model-with-ollama-via-slurm",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "🤖 Template: Downloading a Model with Ollama via SLURM",
+    "text": "🤖 Template: Downloading a Model with Ollama via SLURM\n#!/bin/bash -l\n#SBATCH --cluster=wice\n#SBATCH --partition=batch_sapphirerapids\n#SBATCH --time=02:00:00\n#SBATCH --mem=128G\n#SBATCH --account=lp_h_dv_nlp\n#SBATCH --output=ollama_download.out\n\n# Set model location and port\nexport OLLAMA_MODELS=/staging/leuven/stg_00191/ollama_models\nexport OLLAMA_HOST=127.0.0.1:37712\n\n# Start Ollama server\n/data/leuven/377/vsc37712/ollama/bin/ollama serve &\n\n# Wait until server is active\nsleep 15\n\n# Pull the desired model\n/data/leuven/377/vsc37712/ollama/bin/ollama pull deepseek-r1:70b\n\n# Wait for download to complete\nsleep 600\n\n⚡ How to Submit the Job\nsbatch ollama_setup.slurm",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#folder-organization-tip",
+    "href": "vsc_setup.html#folder-organization-tip",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "📁 Folder Organization Tip",
+    "text": "📁 Folder Organization Tip\nOrganize your files like so:\n/data/leuven/377/vscXXXX/\n├── slurm_scripts/\n│   ├── run_model.slurm\n│   └── ollama_setup.slurm\n├── python_scripts/\n│   └── icd_9cm_symptoms_deepseek70b.py\n├── results/\n│   └── *.out\n└── ollama/",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#summary-1",
+    "href": "vsc_setup.html#summary-1",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "📄 Summary",
+    "text": "📄 Summary\n\nUse SLURM scripts to manage resources and control execution.\nInclude robust checks to confirm servers like Ollama are active.\nLog outputs for easy debugging.\nSeparate model download and inference workflows into distinct scripts.",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#next-step",
+    "href": "vsc_setup.html#next-step",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "✅ Next Step",
+    "text": "✅ Next Step\nTest the SLURM scripts with small jobs to verify functionality. Then scale up to full model runs and analysis batches.",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#next-step-1",
+    "href": "vsc_setup.html#next-step-1",
+    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "section": "🧩 Next Step",
+    "text": "🧩 Next Step\nProceed to testing your local script with Ollama/OpenAI using dummy prompts. Then, optimize for batch runs on VSC.",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  }
+]
