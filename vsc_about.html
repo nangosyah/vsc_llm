@@ -6,8 +6,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Tom Wellard-Nangosyah">
-<meta name="dcterms.date" content="2025-07-20">
 
 <title>Running LLMs on HPC for Clinical Symptom Extraction – Running LLMs on HPC</title>
 <style>
@@ -81,7 +79,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./vsc_about.html">Home</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./vsc_about.html">Project Overview</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -108,8 +106,14 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vsc_about.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./vsc_about.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Project Overview</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -146,16 +150,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#project-overview" id="toc-project-overview" class="nav-link active" data-scroll-target="#project-overview">👋 Project Overview</a>
+  <li><a href="#research-objective" id="toc-research-objective" class="nav-link active" data-scroll-target="#research-objective">Research Objective</a></li>
+  <li><a href="#data-source-mimic-iv" id="toc-data-source-mimic-iv" class="nav-link" data-scroll-target="#data-source-mimic-iv">Data Source: MIMIC-IV</a>
   <ul class="collapse">
-  <li><a href="#research-objective" id="toc-research-objective" class="nav-link" data-scroll-target="#research-objective">Research Objective</a></li>
-  <li><a href="#pedagogical-value" id="toc-pedagogical-value" class="nav-link" data-scroll-target="#pedagogical-value">Pedagogical Value</a></li>
-  <li><a href="#data-source-mimic-iv" id="toc-data-source-mimic-iv" class="nav-link" data-scroll-target="#data-source-mimic-iv">1. Data Source: MIMIC-IV</a>
-  <ul class="collapse">
-  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#access-requirements" id="toc-access-requirements" class="nav-link" data-scroll-target="#access-requirements">Access Requirements</a></li>
-  <li><a href="#implementation-note" id="toc-implementation-note" class="nav-link" data-scroll-target="#implementation-note">Implementation Note</a></li>
-  </ul></li>
+  <li><a href="#data-access-requirements" id="toc-data-access-requirements" class="nav-link" data-scroll-target="#data-access-requirements">Data Access Requirements</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -172,19 +170,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Tom Wellard-Nangosyah </p>
-          </div>
-  </div>
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">July 20, 2025</p>
-    </div>
-  </div>
   
     
   </div>
@@ -194,38 +180,43 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="project-overview" class="level1">
-<h1>👋 Project Overview</h1>
+<p>This project demonstrates a scalable workflow for generating patient-reported symptom lists for medical conditions using open Large Language Models (LLMs) on the <strong>Vlaams Supercomputer (VSC)</strong>.</p>
+<hr>
 <section id="research-objective" class="level2">
 <h2 class="anchored" data-anchor-id="research-objective">Research Objective</h2>
-<p>This project demonstrates a scalable approach to generating patient-reported symptom lists for medical conditions using open Large Language Models (LLMs) on the <strong>Vlaams Supercomputer (VSC)</strong>. For a curated set of diseases (ICD codes) sourced from the <em>MIMIC-IV</em> clinical database, we systematically prompt LLMs to produce <strong>exactly 10 common symptoms</strong> per condition. The structured outputs (JSONL/Parquet) are prepared for downstream analysis including frequency mapping and ontology alignment.</p>
-</section>
-<section id="pedagogical-value" class="level2">
-<h2 class="anchored" data-anchor-id="pedagogical-value">Pedagogical Value</h2>
-<p>Through this workflow, researchers will learn: - HPC job orchestration using SLURM arrays - Batch processing of LLM queries with error handling - Structured output extraction (JSONL/Parquet) - Reproducible research practices - Ethical considerations for clinical NLP</p>
+<p>For a curated set of diseases (ICD codes) sourced from the <em>MIMIC-IV</em> clinical database, we systematically prompt open LLMs to produce <strong>exactly 10 common symptoms</strong> per condition. The outputs are saved in structured formats (JSON/Parquet) for downstream clinical data science.</p>
+<p>The workflow illustrates how to:</p>
+<ul>
+<li>Set up and work efficiently on HPC (High-Performance Computing).</li>
+<li>Understand credits and resource allocation on VSC.</li>
+<li>Configure and prepare the compute environment.</li>
+<li>Download and manage open-source LLMs for clinical tasks.</li>
+<li>Orchestrate compute jobs using SLURM (including ready-to-use script templates)</li>
+<li>Process LLM prompts and collect results.</li>
+<li>Extract and structure outputs for analysis (JSONL/Parquet).</li>
+<li>Apply best practices for running large-scale jobs on HPC</li>
+<li>Address basic ethical considerations in generative AI for healthcare</li>
+</ul>
 <hr>
 </section>
 <section id="data-source-mimic-iv" class="level2">
-<h2 class="anchored" data-anchor-id="data-source-mimic-iv">1. Data Source: MIMIC-IV</h2>
-<section id="overview" class="level3">
-<h3 class="anchored" data-anchor-id="overview">Overview</h3>
-<p><strong>MIMIC-IV</strong> (Medical Information Mart for Intensive Care IV) is a de-identified, publicly accessible database of ICU patient records from Beth Israel Deaconess Medical Center, containing: - Clinical documentation - Diagnostic codes (ICD-9/10) - Vital signs and laboratory measurements - Medication records</p>
-</section>
-<section id="access-requirements" class="level3">
-<h3 class="anchored" data-anchor-id="access-requirements">Access Requirements</h3>
+<h2 class="anchored" data-anchor-id="data-source-mimic-iv">Data Source: MIMIC-IV</h2>
+<p><a href="https://physionet.org/content/mimiciv">MIMIC-IV</a> (Medical Information Mart for Intensive Care IV) is a publicly available, de-identified database containing detailed records from ICU patients, including: - Clinical notes and documentation - Diagnostic codes (ICD-9/ICD-10) - Laboratory and vital sign measurements - Medication and procedure records</p>
+<section id="data-access-requirements" class="level3">
+<h3 class="anchored" data-anchor-id="data-access-requirements">Data Access Requirements</h3>
+<p>In order to access the data the following have to be fulfilled:</p>
 <ol type="1">
-<li>Completion of CITI training or equivalent</li>
-<li>Institutional approval via PhysioNet</li>
-<li>Compliance with Data Use Agreement (<a href="https://physionet.org/content/mimiciv">physionet.org/content/mimiciv</a>)</li>
+<li>Complete CITI training (or equivalent human subjects research training)</li>
+<li>Obtain institutional approval through <a href="https://physionet.org/">PhysioNet</a></li>
+<li>Sign and comply with the official MIMIC-IV Data Use Agreement</li>
 </ol>
-</section>
-<section id="implementation-note" class="level3">
-<h3 class="anchored" data-anchor-id="implementation-note">Implementation Note</h3>
-<p>Only <strong>disease names and ICD codes</strong> are submitted to LLMs. No patient-level data is transmitted. Source version (<code>mimic-iv-2.2</code>) is documented in <code>data/README.md</code>.</p>
+<blockquote class="blockquote">
+<p><strong>Note:</strong><br>
+<em>In this workflow, only disease names and ICD codes were submitted to LLMs. No patient-level or identifying data was used or transmitted.</em></p>
+</blockquote>
 <hr>
 
 
-</section>
 </section>
 </section>
 
@@ -322,7 +313,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/nangosyah\.github\.io\/vsc_llm\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
