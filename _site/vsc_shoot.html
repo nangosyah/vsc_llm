@@ -140,8 +140,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vsc_about.html" class="sidebar-item-text sidebar-link">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./vsc_about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project Overview</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -178,13 +184,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#goal" id="toc-goal" class="nav-link active" data-scroll-target="#goal">🎯 Goal</a></li>
-  <li><a href="#key-questions" id="toc-key-questions" class="nav-link" data-scroll-target="#key-questions">🔑 Key Questions</a></li>
-  <li><a href="#structure-of-a-slurm-script" id="toc-structure-of-a-slurm-script" class="nav-link" data-scroll-target="#structure-of-a-slurm-script">🛠️ Structure of a SLURM Script</a></li>
-  <li><a href="#template-running-a-python-script-using-ollama" id="toc-template-running-a-python-script-using-ollama" class="nav-link" data-scroll-target="#template-running-a-python-script-using-ollama">✍️ Template: Running a Python Script Using Ollama</a>
-  <ul class="collapse">
-  <li><a href="#how-to-submit-the-job" id="toc-how-to-submit-the-job" class="nav-link" data-scroll-target="#how-to-submit-the-job">⚡ How to Submit the Job</a></li>
-  </ul></li>
+  <li><a href="#write-the-python-script" id="toc-write-the-python-script" class="nav-link active" data-scroll-target="#write-the-python-script">1. Write the Python Script</a></li>
+  <li><a href="#prepare-the-slurm-script" id="toc-prepare-the-slurm-script" class="nav-link" data-scroll-target="#prepare-the-slurm-script">2. Prepare the SLURM Script</a></li>
+  <li><a href="#submit-and-monitor-your-job" id="toc-submit-and-monitor-your-job" class="nav-link" data-scroll-target="#submit-and-monitor-your-job">3. Submit and Monitor Your Job</a></li>
+  <li><a href="#example-output-result-snapshot" id="toc-example-output-result-snapshot" class="nav-link" data-scroll-target="#example-output-result-snapshot">4. Example: Output Result Snapshot</a></li>
   </ul>
 </nav>
     </div>
@@ -210,90 +213,279 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="goal" class="level2">
-<h2 class="anchored" data-anchor-id="goal">🎯 Goal</h2>
-<p>Learn how to create and submit SLURM jobs on the KU Leuven VSC cluster. This includes:</p>
+<p>At this stage, you have:</p>
 <ul>
-<li>Writing SLURM job scripts</li>
-<li>Running Python code in a job</li>
-<li>Downloading models with Ollama</li>
+<li>Defined your research question (prompting an LLM for symptoms per ICD code)</li>
+<li>Set up your HPC environment on VSC</li>
+<li>Downloaded and prepared your Ollama models</li>
+</ul>
+<p>Now, you need to run your analysis efficiently on the VSC cluster using SLURM.<br>
+In this section, you will:</p>
+<ul>
+<li>Write a SLURM job script for querying the LLM</li>
+<li>Submit your script as a job to the VSC cluster</li>
+<li>Collect structured outputs for downstream analysis</li>
 </ul>
 <hr>
-</section>
-<section id="key-questions" class="level2">
-<h2 class="anchored" data-anchor-id="key-questions">🔑 Key Questions</h2>
+<section id="write-the-python-script" class="level1">
+<h1>1. Write the Python Script</h1>
+<p>You need a Python script that will:</p>
 <ul>
-<li>How do I write a SLURM job script?</li>
-<li>How do I run a Python script in a SLURM job?</li>
-<li>What does a complete SLURM setup look like for running or downloading models?</li>
+<li>Read ICD codes and disease names from your input data (e.g., a Parquet file)</li>
+<li>Prompt the LLM for each disease to generate symptom lists</li>
+<li>Save the results in JSONL and Parquet formats for easy downstream analysis</li>
 </ul>
-<hr>
-</section>
-<section id="structure-of-a-slurm-script" class="level2">
-<h2 class="anchored" data-anchor-id="structure-of-a-slurm-script">🛠️ Structure of a SLURM Script</h2>
-<p>SLURM job scripts are Bash files with <code>#SBATCH</code> directives that specify:</p>
-<ul>
-<li>Job name and resources (e.g., time, memory, GPUs)</li>
-<li>Output logs</li>
-<li>Environment setup (e.g., module load, conda activation)</li>
-<li>The command(s) to execute</li>
-</ul>
-<hr>
-</section>
-<section id="template-running-a-python-script-using-ollama" class="level2">
-<h2 class="anchored" data-anchor-id="template-running-a-python-script-using-ollama">✍️ Template: Running a Python Script Using Ollama</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash -l</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=ollama_icd9cm_symptoms</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cluster=wice</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --partition=gpu_h100</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --gpus-per-node=1</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=02:00:00</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=128G</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --account=lp_h_dv_nlp</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=/data/leuven/377/vsc37712/results/icd_9cm_symptoms_deepseek70b%j.out</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Set environment variables</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OLLAMA_MODELS</span><span class="op">=</span>/staging/leuven/stg_00191/ollama_models</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OLLAMA_HOST</span><span class="op">=</span>127.0.0.1:37712</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OLLAMA_PORT</span><span class="op">=</span>37712</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Change to working directory</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /data/leuven/377/vsc37712/test_data</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate conda environment</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /data/leuven/377/vsc37712/miniconda3/bin/activate ollama_venv</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Specify GPU usage</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CUDA_VISIBLE_DEVICES</span><span class="op">=</span>0</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Start Ollama server (logs for debugging)</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="ex">/data/leuven/377/vsc37712/ollama/bin/ollama</span> serve <span class="op">&gt;</span> /data/leuven/377/vsc37712/results/ollama_server_%j.log <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span> <span class="kw">&amp;</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Wait for Ollama to be ready</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="dt">{</span><span class="dv">1</span><span class="dt">..</span><span class="dv">15</span><span class="dt">}</span><span class="kw">;</span> <span class="cf">do</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="ex">curl</span> <span class="at">-s</span> http://127.0.0.1:37712/api/tags <span class="op">&gt;</span> /dev/null<span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">"Ollama server is up!"</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sleep</span> 2</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<p>Use the template below as a starting point (customize paths, model name, and prompt as needed):</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">import</span> os</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">import</span> pandas as pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">import</span> requests</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">import</span> time</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">import</span> logging</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">from</span> fastparquet import write as fp_write</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ----------- CONFIGURATION -----------</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># set the model name you want to use</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ex">MODEL_NAME</span> = <span class="st">"your-llm-model-name"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># update these paths for your environment</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ex">PARQUET_PATH</span> = <span class="st">"/path/to/your/input_data.parquet"</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ex">RESULTS_DIR</span> = <span class="st">"/path/to/your/results"</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ex">os.makedirs</span><span class="er">(</span><span class="ex">RESULTS_DIR,</span> exist_ok=True<span class="kw">)</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># output files</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ex">JSON_OUTPUT</span> = os.path.join<span class="er">(</span><span class="ex">RESULTS_DIR,</span> f<span class="st">"symptom_results_{MODEL_NAME}.json"</span><span class="kw">)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ex">PARQUET_OUTPUT</span> = os.path.join<span class="er">(</span><span class="ex">RESULTS_DIR,</span> f<span class="st">"symptom_results_{MODEL_NAME}.parquet"</span><span class="kw">)</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ex">LOG_FILE</span> = os.path.join<span class="er">(</span><span class="ex">RESULTS_DIR,</span> f<span class="st">"extract_symptoms_{MODEL_NAME}.log"</span><span class="kw">)</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># LLM API endpoint</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ex">LLM_API_URL</span> = <span class="st">"http://localhost:37712/api/generate"</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># list of models and their settings</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ex">LLM_MODELS</span> = <span class="pp">[</span><span class="ss">MODEL_NAME</span><span class="pp">]</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="ex">LLM_MODEL_SETTINGS</span> = {</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"your-llm-model-name"</span><span class="ex">:</span> {</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"temperature"</span><span class="ex">:</span> 0.5,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">"max_tokens"</span><span class="ex">:</span> 200,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">"top_k"</span><span class="ex">:</span> 3,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">"top_n"</span><span class="ex">:</span> 1</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="er">}</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="ot">! </span><span class="ex">curl</span> <span class="at">-s</span> http://127.0.0.1:37712/api/tags <span class="op">&gt;</span> /dev/null<span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">"Ollama server did not start correctly."</span> <span class="op">&gt;&amp;</span><span class="dv">2</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exit</span> 1</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Python script</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> /data/leuven/377/vsc37712/python_scripts/icd_9cm_symptoms_deepseek70b.py</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"SLURM job finished at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="how-to-submit-the-job" class="level3">
-<h3 class="anchored" data-anchor-id="how-to-submit-the-job">⚡ How to Submit the Job</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> run_ollama_icd9cm.slurm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="ex">logging.basicConfig</span><span class="er">(</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="va">filename</span><span class="op">=</span>LOG_FILE,</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="va">level</span><span class="op">=</span>logging.INFO,</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="va">format</span><span class="op">=</span><span class="st">'%(asctime)s - %(levelname)s - %(message)s'</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="kw">)</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co"># ----------- Environment Check -----------</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="ex">def</span> check_environment<span class="er">(</span><span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="ex">not</span> os.path.exists<span class="er">(</span><span class="ex">PARQUET_PATH</span><span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>        <span class="ex">raise</span> FileNotFoundError<span class="er">(</span><span class="ex">f</span><span class="st">"Input Parquet file not found at {PARQUET_PATH}"</span><span class="kw">)</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="ex">not</span> os.path.exists<span class="er">(</span><span class="ex">RESULTS_DIR</span><span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>        <span class="ex">os.makedirs</span><span class="er">(</span><span class="ex">RESULTS_DIR</span><span class="kw">)</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>        <span class="ex">logging.info</span><span class="er">(</span><span class="ex">f</span><span class="st">"Created results directory at {RESULTS_DIR}"</span><span class="kw">)</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="co"># ----------- Data Loading -----------</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="ex">def</span> load_data<span class="er">(</span><span class="ex">parquet_path</span><span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    <span class="ex">import</span> duckdb</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    <span class="ex">conn</span> = duckdb.connect<span class="er">(</span><span class="kw">)</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    <span class="ex">query</span> = <span class="st">"""</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT DISTINCT icd_code, long_title</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="st">        FROM parquet_scan('{}')</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="st">        WHERE icd_code IS NOT NULL AND long_title IS NOT NULL</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span>.format<span class="er">(</span><span class="ex">parquet_path</span><span class="kw">)</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">df</span> = conn.execute<span class="er">(</span><span class="ex">query</span><span class="kw">)</span><span class="fu">.fetch_df()</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">conn.close()</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fu">df</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="co"># ----------- Prompt Creation -----------</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="ex">def</span> create_prompt<span class="er">(</span><span class="ex">icd_code,</span> description<span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">(</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>        <span class="ex">f</span><span class="st">"Given the ICD-9CM code {icd_code} with description </span><span class="dt">\"</span><span class="st">{description}</span><span class="dt">\"</span><span class="st">, "</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>        <span class="ex">f</span><span class="st">"identify the 10 most common symptoms typically associated with this condition. "</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>        <span class="ex">f</span><span class="st">"Return the symptoms as a comma-separated list, and only include the symptom names."</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>    <span class="kw">)</span></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="co"># ----------- LLM Query Function -----------</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="ex">def</span> query_llm<span class="er">(</span><span class="ex">prompt,</span> model_name, temperature=0.5, max_tokens=150, top_k=3, top_n=1<span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>    <span class="ex">payload</span> = {</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>        <span class="st">"model"</span><span class="ex">:</span> model_name,</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>        <span class="st">"prompt"</span><span class="ex">:</span> prompt,</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>        <span class="st">"temperature"</span><span class="ex">:</span> temperature,</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>        <span class="st">"max_tokens"</span><span class="ex">:</span> max_tokens,</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>        <span class="st">"top_k"</span><span class="ex">:</span> top_k,</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>        <span class="st">"top_n"</span><span class="ex">:</span> top_n,</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>        <span class="st">"stream"</span><span class="ex">:</span> False</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>    <span class="er">}</span></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>    <span class="ex">try:</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>        <span class="ex">response</span> = requests.post<span class="er">(</span><span class="ex">LLM_API_URL,</span> json=payload, timeout=60<span class="kw">)</span></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>        <span class="fu">response.raise_for_status()</span></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">response.json()</span><span class="ex">.get</span><span class="er">(</span><span class="st">"response"</span><span class="ex">,</span> <span class="st">""</span><span class="kw">)</span><span class="fu">.strip()</span></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>    <span class="ex">except</span> Exception as e:</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>        <span class="ex">logging.error</span><span class="er">(</span><span class="ex">f</span><span class="st">"LLM request failed for {model_name}: {e}"</span><span class="kw">)</span></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">""</span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a><span class="co"># ----------- Main Extraction -----------</span></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="ex">def</span> extract_symptoms<span class="er">(</span><span class="ex">parquet_path</span><span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>    <span class="fu">df</span> = load_data<span class="er">(</span><span class="ex">parquet_path</span><span class="kw">)</span></span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>    <span class="ex">results</span> = []</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> model_name <span class="kw">in</span> LLM_MODELS:</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>        <span class="ex">logging.info</span><span class="er">(</span><span class="ex">f</span><span class="st">"Processing model: {model_name}"</span><span class="kw">)</span></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>        <span class="ex">params</span> = LLM_MODEL_SETTINGS<span class="pp">[</span><span class="ss">model_name</span><span class="pp">]</span></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> _<span class="ex">,</span> row in tqdm<span class="er">(</span><span class="fu">df.iterrows()</span><span class="ex">,</span> total=len<span class="er">(</span><span class="fu">df</span><span class="kw">)</span><span class="ex">,</span> desc=f<span class="st">"Model {model_name}"</span><span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>            <span class="ex">icd_code</span> = row<span class="pp">[</span><span class="st">"icd_code"</span><span class="pp">]</span></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>            <span class="ex">description</span> = row<span class="pp">[</span><span class="st">"long_title"</span><span class="pp">]</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>            <span class="ex">prompt</span> = create_prompt<span class="er">(</span><span class="ex">icd_code,</span> description<span class="kw">)</span></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>            <span class="ex">start</span> = time.time<span class="er">(</span><span class="kw">)</span></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>            <span class="ex">response</span> = query_llm<span class="er">(</span></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>                <span class="ex">prompt,</span> model_name,</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>                <span class="va">temperature</span><span class="op">=</span>params<span class="pp">[</span><span class="st">"temperature"</span><span class="pp">]</span>,</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>                <span class="va">max_tokens</span><span class="op">=</span>params<span class="pp">[</span><span class="st">"max_tokens"</span><span class="pp">]</span>,</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>                <span class="va">top_k</span><span class="op">=</span>params<span class="pp">[</span><span class="st">"top_k"</span><span class="pp">]</span>,</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>                <span class="va">top_n</span><span class="op">=</span>params<span class="pp">[</span><span class="st">"top_n"</span><span class="pp">]</span></span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>            <span class="kw">)</span></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>            <span class="ex">duration</span> = time.time<span class="er">(</span><span class="kw">)</span> <span class="ex">-</span> start</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>            <span class="ex">results.append</span><span class="er">(</span><span class="kw">{</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>                <span class="st">"icd_code"</span><span class="ex">:</span> icd_code,</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>                <span class="st">"title"</span><span class="ex">:</span> description,</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>                <span class="st">"model"</span><span class="ex">:</span> model_name,</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>                <span class="st">"response"</span><span class="ex">:</span> response,</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>                <span class="st">"duration"</span><span class="ex">:</span> duration</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>            <span class="kw">})</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ex">pd.DataFrame</span><span class="er">(</span><span class="ex">results</span><span class="kw">)</span></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="co"># ----------- Main Execution -----------</span></span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="ex">__name__</span> == <span class="st">"__main__"</span>:</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>    <span class="ex">try:</span></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>        <span class="fu">check_environment()</span></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>        <span class="ex">logging.info</span><span class="er">(</span><span class="st">"Starting symptom extraction process..."</span><span class="kw">)</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>        <span class="ex">start_time</span> = time.time<span class="er">(</span><span class="kw">)</span></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>        <span class="ex">symptom_df</span> = extract_symptoms<span class="er">(</span><span class="ex">PARQUET_PATH</span><span class="kw">)</span></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>        <span class="ex">symptom_df.to_json</span><span class="er">(</span><span class="ex">JSON_OUTPUT,</span> orient=<span class="st">"records"</span>, indent=2<span class="kw">)</span></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>        <span class="ex">fp_write</span><span class="er">(</span><span class="ex">PARQUET_OUTPUT,</span> symptom_df, write_index=False<span class="kw">)</span></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>        <span class="ex">elapsed</span> = time.time<span class="er">(</span><span class="kw">)</span> <span class="ex">-</span> start_time</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>        <span class="ex">logging.info</span><span class="er">(</span><span class="ex">f</span><span class="st">"Extraction completed in {elapsed:.2f} seconds. Results saved to {RESULTS_DIR}"</span><span class="kw">)</span></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>        <span class="ex">print</span><span class="er">(</span><span class="ex">f</span><span class="st">"Extraction completed in {elapsed:.2f} seconds."</span><span class="kw">)</span></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>    <span class="ex">except</span> Exception as e:</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>        <span class="ex">logging.error</span><span class="er">(</span><span class="ex">f</span><span class="st">"Fatal error: {e}"</span><span class="kw">)</span></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>        <span class="ex">print</span><span class="er">(</span><span class="ex">f</span><span class="st">"Fatal error: {e}"</span><span class="kw">)</span></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>        <span class="ex">raise</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="prepare-the-slurm-script" class="level1">
+<h1>2. Prepare the SLURM Script</h1>
+<p>Write a SLURM script (for example, llm_symptoms.slurm) that:</p>
+<ul>
+<li>Requests the required resources on the cluster</li>
+<li>Sets up the LLM server and environment</li>
+<li>Runs your Python script</li>
+</ul>
+<p>Template below is a guide:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash -l</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=ollama_icd9cm_symptoms</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cluster=wice</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --partition=gpu_h100</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --gpus-per-node=1</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=02:00:00</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=128G</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --account=xxxxx</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=/data/leuven/377/vsc37712/results/icd_9cm_symptoms_deepseek70b%j.out</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Set environment variables for Ollama and model storage</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OLLAMA_MODELS</span><span class="op">=</span>/path/to/your/llm_models</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OLLAMA_HOST</span><span class="op">=</span>127.0.0.1:37712</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OLLAMA_PORT</span><span class="op">=</span><span class="kw">`</span><span class="ex">vscXXXXX</span><span class="kw">`</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Move to the data/code directory</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /path/to/your/working_directory</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the Python conda environment</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /path/to/your/miniconda3/bin/activate your_env_name</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Set GPU usage</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CUDA_VISIBLE_DEVICES</span><span class="op">=</span>0</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Start Ollama server (logging for debugging)</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="ex">/path/to/your/llm_server/bin/llm_server_command</span> serve <span class="op">&gt;</span> /path/to/your/results/llm_server_%j.log <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span> <span class="kw">&amp;</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Wait for Ollama server to be ready (simple loop)</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="dt">{</span><span class="dv">1</span><span class="dt">..</span><span class="dv">15</span><span class="dt">}</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="ex">curl</span> <span class="at">-s</span> http://127.0.0.1:37712/api/tags <span class="op">&gt;</span> /dev/null<span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">"Ollama server is up!"</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sleep</span> 2</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Double-check server is up before proceeding</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="ot">! </span><span class="ex">curl</span> <span class="at">-s</span> http://127.0.0.1:xxxx/api/tags <span class="op">&gt;</span> /dev/null<span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">"Ollama server did not start correctly."</span> <span class="op">&gt;&amp;</span><span class="dv">2</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="bu">exit</span> 1</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the Python script</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> /path/to/your/python_scripts/deepseek70b.py</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"SLURM job finished at </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="submit-and-monitor-your-job" class="level1">
+<h1>3. Submit and Monitor Your Job</h1>
+<p>Submit your SLURM job from the terminal:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> run_llm_symptom_extraction.slurm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Monitor your job status:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">squeue</span> <span class="at">-u</span> <span class="va">$USER</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Check your logs and results in the output directory you specified in your slurm scripts.</p>
+<hr>
+</section>
+<section id="example-output-result-snapshot" class="level1">
+<h1>4. Example: Output Result Snapshot</h1>
+<p>A typical output from the LLM will look like this:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">[</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"code"</span>: <span class="st">"250.00"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="er">"disease":</span> <span class="er">"Diabetes</span> <span class="ex">mellitus</span> without mention of complication<span class="st">",</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">    "</span>symptoms<span class="st">": [</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>increased thirst<span class="st">",</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>frequent urination<span class="st">",</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>blurred vision<span class="st">",</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>fatigue<span class="st">",</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>slow-healing sores<span class="st">",</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>unintended weight loss<span class="st">",</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>hunger<span class="st">",</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>dry mouth<span class="st">",</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>headaches<span class="st">",</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>recurrent infections<span class="st">"</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="st">    ]</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="st">  },</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="st">  {</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="st">    "</span>code<span class="st">": "</span>401.9<span class="st">",</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="st">    "</span>disease<span class="st">": "</span>Essential hypertension, unspecified<span class="st">",</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="st">    "</span>symptoms<span class="st">": [</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>headache<span class="st">",</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>dizziness<span class="st">",</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>nosebleeds<span class="st">",</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>shortness of breath<span class="st">",</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>chest pain<span class="st">",</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>blurred vision<span class="st">",</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>fatigue<span class="st">",</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>nausea<span class="st">",</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>palpitations<span class="st">",</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="st">      "</span>confusion<span class="st">"</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="st">    ]</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="st">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

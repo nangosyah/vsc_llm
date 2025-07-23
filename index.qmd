@@ -1,12 +1,16 @@
 ---
 title: "Running LLMs on HPC"
+author: "Tom Wellard Nangosyah"
+date: "2025-07-20"
 format: html
 ---
 
-# Welcome
+## Project Context
 
-Welcome to **Running LLMs on HPC**!  
 This site is a practical guide for deploying, managing, and analyzing large language models (LLMs) using the Vlaams Supercomputer (VSC).
+
+This project was completed as part of my internship, under the guidance of [Prof. Dr. Dirk Valkenborg](https://www.uhasselt.be/nl/wie-is-wie/dirk-valkenborg) and Jimmy Schepers.  
+Their support and mentorship were instrumental in bringing this work to fruition.
 
 ---
 
@@ -14,35 +18,27 @@ This site is a practical guide for deploying, managing, and analyzing large lang
 
 - **Project Overview:**  
   Understand the goals and scope of this project.
-
 - **HPC & LLM Basics:**  
-  Learn foundational concepts about high-performance computing and LLMs.
-
+  Learn foundational concepts about high-performance computing and how to run LLMs.
 - **Environment Setup:**  
   Step-by-step instructions for setting up your VSC environment, downloading models, and managing dependencies.
-
 - **Running Jobs:**  
   How to launch SLURM jobs, organize scripts, and capture logs/output.
-
 - **Best Practices:**  
   Proven tips for efficient, reproducible, and scalable research on HPC.
 
 ---
 
-## Quick Start
-
-1. **Read the Project Overview** to understand the workflow.
-2. **Set up your environment** following the Environment Setup section.
-3. **Submit your first SLURM job** using the templates provided.
-4. **Explore Best Practices** for optimizing your workflow.
-
----
-
 ## About VSC
 
-The **Vlaams Supercomputer Center (VSC)** provides powerful computing resources for research and innovation in Flanders.  
+The **Vlaams SuperComputer (VSC)** provides powerful computing resources for research and innovation in Flanders.  
 Learn more: [VSC User Portal](https://www.vscentrum.be/en/)
 
 ---
 
-_Navigate using the sidebar to get started!_
+## Acknowledgments
+
+I sincerely thank **Prof. Dr. Dirk Valkenborg** and **Jimmy Schepers** for their exceptional mentorship throughout this project.
+
+---
+

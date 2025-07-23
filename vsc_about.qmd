@@ -1,7 +1,5 @@
 ---
 title: "Running LLMs on HPC for Clinical Symptom Extraction"
-author: "Tom Wellard-Nangosyah"
-date: "2025-07-20"
 format:
   html:
     toc: true
@@ -11,38 +9,46 @@ execute:
   freeze: auto
 ---
 
-# 👋 Project Overview
+This project demonstrates a scalable workflow for generating patient-reported symptom lists for medical conditions using open Large Language Models (LLMs) on the **Vlaams Supercomputer (VSC)**.
+
+---
 
 ## Research Objective
-This project demonstrates a scalable approach to generating patient-reported symptom lists for medical conditions using open Large Language Models (LLMs) on the **Vlaams Supercomputer (VSC)**. For a curated set of diseases (ICD codes) sourced from the *MIMIC-IV* clinical database, we systematically prompt LLMs to produce **exactly 10 common symptoms** per condition. The structured outputs (JSONL/Parquet) are prepared for downstream analysis including frequency mapping and ontology alignment.
 
-## Pedagogical Value
-Through this workflow, researchers will learn:
-- HPC job orchestration using SLURM arrays
-- Batch processing of LLM queries with error handling
-- Structured output extraction (JSONL/Parquet)
-- Reproducible research practices
-- Ethical considerations for clinical NLP
+For a curated set of diseases (ICD codes) sourced from the *MIMIC-IV* clinical database, we systematically prompt open LLMs to produce **exactly 10 common symptoms** per condition. The outputs are saved in structured formats (JSON/Parquet) for downstream clinical data science.
 
----
+The workflow illustrates how to:
 
-## 1. Data Source: MIMIC-IV
-
-### Overview
-**MIMIC-IV** (Medical Information Mart for Intensive Care IV) is a de-identified, publicly accessible database of ICU patient records from Beth Israel Deaconess Medical Center, containing:
-- Clinical documentation
-- Diagnostic codes (ICD-9/10)
-- Vital signs and laboratory measurements
-- Medication records
-
-### Access Requirements
-1. Completion of CITI training or equivalent
-2. Institutional approval via PhysioNet
-3. Compliance with Data Use Agreement ([physionet.org/content/mimiciv](https://physionet.org/content/mimiciv))
-
-### Implementation Note
-Only **disease names and ICD codes** are submitted to LLMs. No patient-level data is transmitted. Source version (`mimic-iv-2.2`) is documented in `data/README.md`.
+- Set up and work efficiently on HPC (High-Performance Computing).
+- Understand credits and resource allocation on VSC.
+- Configure and prepare the compute environment.
+- Download and manage open-source LLMs for clinical tasks.
+- Orchestrate compute jobs using SLURM (including ready-to-use script templates)
+- Process LLM prompts and collect results.
+- Extract and structure outputs for analysis (JSONL/Parquet).
+- Apply best practices for running large-scale jobs on HPC
+- Address basic ethical considerations in generative AI for healthcare
 
 ---
 
+## Data Source: MIMIC-IV
+
+[MIMIC-IV](https://physionet.org/content/mimiciv) (Medical Information Mart for Intensive Care IV) is a publicly available, de-identified database containing detailed records from ICU patients, including:
+- Clinical notes and documentation
+- Diagnostic codes (ICD-9/ICD-10)
+- Laboratory and vital sign measurements
+- Medication and procedure records
+
+### Data Access Requirements
+
+In order to access the data the following have to be fulfilled: 
+
+1. Complete CITI training (or equivalent human subjects research training)
+2. Obtain institutional approval through [PhysioNet](https://physionet.org/)
+3. Sign and comply with the official MIMIC-IV Data Use Agreement
+
+> **Note:**  
+> _In this workflow, only disease names and ICD codes were submitted to LLMs. No patient-level or identifying data was used or transmitted._
+
+---
 

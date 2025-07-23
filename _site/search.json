@@ -4,7 +4,7 @@
     "href": "vsc_jobs.html",
     "title": "Best Practices for Running Models on HPC",
     "section": "",
-    "text": "Introduction\n\nHigh-Performance Computing (HPC) enables efficient training and evaluation of large models.\nFollowing best practices maximizes resource usage, minimizes job failures, and ensures reproducibility.\n\n\n\n\n1. Resource Management\n\nRequest only the resources you need (CPUs, GPUs, memory, wall time).\nUse benchmarking and profiling to estimate resource requirements.\nMonitor your jobs and adjust future requests accordingly.\nRelease resources as soon as jobs finish.\n\n\n\n\n2. Job Scheduling and SLURM Usage\n\nUse SLURM array jobs for large-scale parameter sweeps or cross-validation.\nName your jobs descriptively with #SBATCH --job-name.\nOrganize job outputs and logs using #SBATCH --output and subfolders.\nRegularly check job status (squeue -u $USER) and manage queued/running jobs (scancel).\n\n\n\n\n3. Data Handling\n\nStore large datasets in the appropriate HPC data storage (e.g., $VSC_DATA).\nAvoid reading/writing directly to your home directory for big files.\nUse the scratch directory ($VSC_SCRATCH) for temporary files and clean up after jobs finish.\nPre-stage data before computation; transfer results after job completion.\n\n\n\n\n4. Code and Environment Management\n\nUse environment modules or containers to manage dependencies.\nDocument your environment (module load commands, requirements.txt, etc.).\nUse version control (e.g., Git) for all code.\nTest your code with small jobs before scaling up.\n\n\n\n\n5. Reproducibility\n\nRecord job parameters, random seeds, software versions, and output locations.\nStore SLURM scripts and configuration files with your results.\nUse automated logging and metadata files.\n\n\n\n\n6. Error Handling and Debugging\n\nUse --mail-type=FAIL in SLURM to get failure notifications.\nCheck logs regularly for errors and warnings.\nStart with interactive sessions for debugging before submitting large jobs.\nWrite jobs to fail fast if requirements are not met (e.g., missing data or modules).\n\n\n\n\n7. Collaboration and Documentation\n\nDocument all steps in a README or as Quarto/RMarkdown notebooks.\nOrganize scripts, configs, and data in clear directories.\nShare and backup results promptly.\n\n\n\n\nUseful Links\n\nVSC User Documentation\nSLURM Job Submission Guide\nData Storage Guidelines\n\n\n\n\nTips\n\nAlways do a test run before scaling up.\nClean up your data and scratch spaces.\nCommunicate with your HPC support team for questions or unusual errors.",
+    "text": "Request Only What You Need:\nEstimate resources and adjust based on past jobs.\nOrganize Jobs & Logs:\nUse descriptive job names and structured output folders.\nUse the Right Storage:\nPlace large and temporary files in $VSC_DATA and $VSC_SCRATCH.\nManage Environments:\nUse modules/conda and document dependencies. Version-control your code.\nPromote Reproducibility:\nSave SLURM scripts, configs, and note job parameters.\nDebug Efficiently:\nCheck logs, use interactive/test jobs, and fail fast on errors.\nDocument & Share:\nKeep READMEs and notebooks. Organize scripts, configs, and results.\nClean Up:\nRemove unused data and files regularly.",
     "crumbs": [
       "Best Practices"
     ]
@@ -12,9 +12,9 @@
   {
     "objectID": "vsc_setup.html",
     "href": "vsc_setup.html",
-    "title": "Accessing VSC & Understanding Credits / Quotas",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
     "section": "",
-    "text": "Set up a minimal working development environment both locally and on VSC (KU Leuven HPC), and install required language models (e.g. Ollama). Ensure that you can run dry tests and verify installations.",
+    "text": "This tutorial will guide you step-by-step through setting up a working environment on the VSC (Vlaams Supercomputer Centrum).\nBy the end, you’ll be ready to run your first SLURM job—such as downloading or serving a large language model (LLM) like Ollama—for your research.\nThis tutorial guides you through setting up your working environment on the VSC, using Visual Studio Code for a seamless experience.\nYou’ll learn how to connect remotely, organize your workspace, configure Python, and download models using SLURM.",
     "crumbs": [
       "Environment Setup"
     ]
@@ -92,9 +92,9 @@
   {
     "objectID": "vsc_setup.html#template-downloading-a-model-with-ollama-via-slurm",
     "href": "vsc_setup.html#template-downloading-a-model-with-ollama-via-slurm",
-    "title": "Accessing VSC & Understanding Credits / Quotas",
-    "section": "🤖 Template: Downloading a Model with Ollama via SLURM",
-    "text": "🤖 Template: Downloading a Model with Ollama via SLURM\n#!/bin/bash -l\n#SBATCH --cluster=wice\n#SBATCH --partition=batch_sapphirerapids\n#SBATCH --time=02:00:00\n#SBATCH --mem=128G\n#SBATCH --account=lp_h_dv_nlp\n#SBATCH --output=ollama_download.out\n\n# Set model location and port\nexport OLLAMA_MODELS=/staging/leuven/stg_00191/ollama_models\nexport OLLAMA_HOST=127.0.0.1:37712\n\n# Start Ollama server\n/data/leuven/377/vsc37712/ollama/bin/ollama serve &\n\n# Wait until server is active\nsleep 15\n\n# Pull the desired model\n/data/leuven/377/vsc37712/ollama/bin/ollama pull deepseek-r1:70b\n\n# Wait for download to complete\nsleep 600\n\n⚡ How to Submit the Job\nsbatch ollama_setup.slurm",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "Template: Downloading a Model with Ollama via SLURM",
+    "text": "Template: Downloading a Model with Ollama via SLURM\nBelow is a sample SLURM script for downloading an Ollama model.\n#!/bin/bash -l        \n#SBATCH --cluster=wice\n#SBATCH --partition=batch_sapphirerapids\n#SBATCH --time=02:00:00\n#SBATCH --mem=128G\n#SBATCH --account=lp_h_dv_nlp\n#SBATCH --output=ollama_download.out\n\n# the directory where models will be stored\nexport OLLAMA_MODELS=/staging/leuven/stg_00191/ollama_models\n\n# the host and port for the Ollama server\nexport OLLAMA_HOST=127.0.0.1:37712\n\n# the Ollama server in the background\n/data/leuven/377/vscXXXX/ollama/bin/ollama serve &\n\n# wait a short time to ensure the server starts properly\nsleep 15\n\n# download the desired model from Ollama's repository\n/data/leuven/377/vscXXXX/ollama/bin/ollama pull deepseek-r1:70b\n\n# wait extra time to ensure the download completes before the job ends\nsleep 600\nWhat Each Section of the script does:\n\nThe #SBATCH lines set SLURM job options:\n\ncluster: Specifies which HPC cluster to use.\npartition: Chooses the spscific harware or queue/resource pool to be used.\ntime: Sets the maximum run time allowed for the job (HH:MM:SS).\nmemory: Allocates the required amount of RAM (e.g., 128G for 128 gigabytes).\naccount: Defines the billing/project group charged for resources.\noutput log: Specifies the file to write job output and errors for monitoring and debugging.\n\nThe export lines configure environment variables so Ollama knows where to store models and how to serve them.\nThe command /data/leuven/377/vscXXXX/ollama/bin/ollama serve & starts the Ollama server in the background.\nsleep 15 ensures the server has time to start before the model download begins.\n/data/leuven/377/vscXXXX/ollama/bin/ollama pull deepseek-r1:70b downloads the specified model (deepseek-r1:70b).\nThe final sleep 600 keeps the job running long enough for the download to complete, preventing early termination.",
     "crumbs": [
       "Environment Setup"
     ]
@@ -142,9 +142,9 @@
   {
     "objectID": "vsc_basics.html",
     "href": "vsc_basics.html",
-    "title": "Basics of Running Jobs on VSC",
+    "title": "Beginner’s Guide to working with the VSC",
     "section": "",
-    "text": "Credits on VSC\n\nVSC uses a credit-based system for resource management.\n\nCredits are consumed according to CPU/GPU hours and memory usage.\n\nHow to check your credit balance:\n\nUse the vsc-accounting command in the terminal.\nOr check online: VSC Accounting Dashboard\n\nCredits are requested via your institution.\n\nSee the resource application guide.\n\n\n\n\n\nSLURM Jobs\n\nAll computation on VSC is managed by the SLURM workload manager.\n\nPrepare a SLURM batch script with resource requests and commands.\n\nExample SLURM script:\n#!/bin/bash\n#SBATCH --job-name=llm-symptoms\n#SBATCH --output=logs/%x-%j.out\n#SBATCH --partition=normal\n#SBATCH --nodes=1\n#SBATCH --ntasks=1\n#SBATCH --cpus-per-task=8\n#SBATCH --mem=32G\n#SBATCH --time=02:00:00\n\nmodule load Python/3.10.4-GCCcore-11.3.0\npython scripts/generate_symptoms.py --input data/icd_codes.csv --output data/symptoms_llm_output.jsonl\nSubmit your job: bash     sbatch run_job.sh\nMonitor job status: bash     squeue -u $USER\nMore info: VSC SLURM Jobs\n\n\n\n\nVSC File System & Architecture\n\nWhere does your data live?\n\n$HOME: For code, scripts, and small files (backed up).\n$VSC_DATA: For large datasets and results (not backed up by default).\n$VSC_SCRATCH: For temporary files and outputs (fast, auto-purged).\nSee Data Storage at VSC\n\nWhere does your code live?\n\nUsually in $HOME or in $VSC_DATA/scripts.\nUse version control (e.g., Git) for code management.\n\nWhere does your terminal/session live?\n\nConnect via SSH: bash       ssh &lt;vsc_user&gt;@login.hpc.ugent.be\n\nOr see Accessing VSC\n\nOnly use the login node for setup, file transfer, and job submission.\nRun compute jobs via SLURM, not directly on the login node.\n\n\n\n\n\nUseful Links\n\nVSC Portal\nVSC Documentation\nBatch Jobs & SLURM\nData Storage\nRequesting Resources\nVSC Support\n\n\n\n\nTips\n\nOrganize your project with separate folders for code, data, and logs.\nMonitor your credit and storage usage.\nContact your institution’s VSC support desk for advanced assistance.",
+    "text": "The Vlaams Supercomputer Center (VSC) is a powerful, shared cluster for research.\nBefore you can run jobs or create a project directory, you need to understand:",
     "crumbs": [
       "HPC & LLM Basics"
     ]
@@ -154,7 +154,7 @@
     "href": "vsc_shoot.html",
     "title": "Submitting Jobs with SLURM",
     "section": "",
-    "text": "Learn how to create and submit SLURM jobs on the KU Leuven VSC cluster. This includes:\n\nWriting SLURM job scripts\nRunning Python code in a job\nDownloading models with Ollama",
+    "text": "At this stage, you have:\n\nDefined your research question (prompting an LLM for symptoms per ICD code)\nSet up your HPC environment on VSC\nDownloaded and prepared your Ollama models\n\nNow, you need to run your analysis efficiently on the VSC cluster using SLURM.\nIn this section, you will:\n\nWrite a SLURM job script for querying the LLM\nSubmit your script as a job to the VSC cluster\nCollect structured outputs for downstream analysis\n\n\n\n1. Write the Python Script\nYou need a Python script that will:\n\nRead ICD codes and disease names from your input data (e.g., a Parquet file)\nPrompt the LLM for each disease to generate symptom lists\nSave the results in JSONL and Parquet formats for easy downstream analysis\n\nUse the template below as a starting point (customize paths, model name, and prompt as needed):\nimport os\nimport pandas as pd\nimport requests\nimport time\nimport logging\nfrom fastparquet import write as fp_write\n\n# ----------- CONFIGURATION -----------\n\n# set the model name you want to use\nMODEL_NAME = \"your-llm-model-name\"\n\n# update these paths for your environment\nPARQUET_PATH = \"/path/to/your/input_data.parquet\"\nRESULTS_DIR = \"/path/to/your/results\"\nos.makedirs(RESULTS_DIR, exist_ok=True)\n\n# output files\nJSON_OUTPUT = os.path.join(RESULTS_DIR, f\"symptom_results_{MODEL_NAME}.json\")\nPARQUET_OUTPUT = os.path.join(RESULTS_DIR, f\"symptom_results_{MODEL_NAME}.parquet\")\nLOG_FILE = os.path.join(RESULTS_DIR, f\"extract_symptoms_{MODEL_NAME}.log\")\n\n# LLM API endpoint\nLLM_API_URL = \"http://localhost:37712/api/generate\"\n\n# list of models and their settings\nLLM_MODELS = [MODEL_NAME]\nLLM_MODEL_SETTINGS = {\n    \"your-llm-model-name\": {\n        \"temperature\": 0.5,\n        \"max_tokens\": 200,\n        \"top_k\": 3,\n        \"top_n\": 1\n    }\n}\n\nlogging.basicConfig(\n    filename=LOG_FILE,\n    level=logging.INFO,\n    format='%(asctime)s - %(levelname)s - %(message)s'\n)\n\n# ----------- Environment Check -----------\ndef check_environment():\n    if not os.path.exists(PARQUET_PATH):\n        raise FileNotFoundError(f\"Input Parquet file not found at {PARQUET_PATH}\")\n    if not os.path.exists(RESULTS_DIR):\n        os.makedirs(RESULTS_DIR)\n        logging.info(f\"Created results directory at {RESULTS_DIR}\")\n\n# ----------- Data Loading -----------\ndef load_data(parquet_path):\n    import duckdb\n    conn = duckdb.connect()\n    query = \"\"\"\n        SELECT DISTINCT icd_code, long_title\n        FROM parquet_scan('{}')\n        WHERE icd_code IS NOT NULL AND long_title IS NOT NULL\n    \"\"\".format(parquet_path)\n    df = conn.execute(query).fetch_df()\n    conn.close()\n    return df\n\n# ----------- Prompt Creation -----------\ndef create_prompt(icd_code, description):\n    return (\n        f\"Given the ICD-9CM code {icd_code} with description \\\"{description}\\\", \"\n        f\"identify the 10 most common symptoms typically associated with this condition. \"\n        f\"Return the symptoms as a comma-separated list, and only include the symptom names.\"\n    )\n\n# ----------- LLM Query Function -----------\ndef query_llm(prompt, model_name, temperature=0.5, max_tokens=150, top_k=3, top_n=1):\n    payload = {\n        \"model\": model_name,\n        \"prompt\": prompt,\n        \"temperature\": temperature,\n        \"max_tokens\": max_tokens,\n        \"top_k\": top_k,\n        \"top_n\": top_n,\n        \"stream\": False\n    }\n    try:\n        response = requests.post(LLM_API_URL, json=payload, timeout=60)\n        response.raise_for_status()\n        return response.json().get(\"response\", \"\").strip()\n    except Exception as e:\n        logging.error(f\"LLM request failed for {model_name}: {e}\")\n        return \"\"\n\n# ----------- Main Extraction -----------\ndef extract_symptoms(parquet_path):\n    df = load_data(parquet_path)\n    results = []\n\n    for model_name in LLM_MODELS:\n        logging.info(f\"Processing model: {model_name}\")\n        params = LLM_MODEL_SETTINGS[model_name]\n        for _, row in tqdm(df.iterrows(), total=len(df), desc=f\"Model {model_name}\"):\n            icd_code = row[\"icd_code\"]\n            description = row[\"long_title\"]\n            prompt = create_prompt(icd_code, description)\n            start = time.time()\n            response = query_llm(\n                prompt, model_name,\n                temperature=params[\"temperature\"],\n                max_tokens=params[\"max_tokens\"],\n                top_k=params[\"top_k\"],\n                top_n=params[\"top_n\"]\n            )\n            duration = time.time() - start\n            results.append({\n                \"icd_code\": icd_code,\n                \"title\": description,\n                \"model\": model_name,\n                \"response\": response,\n                \"duration\": duration\n            })\n\n    return pd.DataFrame(results)\n\n# ----------- Main Execution -----------\nif __name__ == \"__main__\":\n    try:\n        check_environment()\n        logging.info(\"Starting symptom extraction process...\")\n        start_time = time.time()\n\n        symptom_df = extract_symptoms(PARQUET_PATH)\n        symptom_df.to_json(JSON_OUTPUT, orient=\"records\", indent=2)\n        fp_write(PARQUET_OUTPUT, symptom_df, write_index=False)\n\n        elapsed = time.time() - start_time\n        logging.info(f\"Extraction completed in {elapsed:.2f} seconds. Results saved to {RESULTS_DIR}\")\n        print(f\"Extraction completed in {elapsed:.2f} seconds.\")\n\n    except Exception as e:\n        logging.error(f\"Fatal error: {e}\")\n        print(f\"Fatal error: {e}\")\n        raise\n\n\n\n2. Prepare the SLURM Script\nWrite a SLURM script (for example, llm_symptoms.slurm) that:\n\nRequests the required resources on the cluster\nSets up the LLM server and environment\nRuns your Python script\n\nTemplate below is a guide:\n\n#!/bin/bash -l\n\n#SBATCH --job-name=ollama_icd9cm_symptoms\n#SBATCH --cluster=wice\n#SBATCH --partition=gpu_h100\n#SBATCH --gpus-per-node=1\n#SBATCH --time=02:00:00\n#SBATCH --mem=128G\n#SBATCH --account=xxxxx\n#SBATCH --output=/data/leuven/377/vsc37712/results/icd_9cm_symptoms_deepseek70b%j.out\n\n# Set environment variables for Ollama and model storage\nexport OLLAMA_MODELS=/path/to/your/llm_models\nexport OLLAMA_HOST=127.0.0.1:37712\nexport OLLAMA_PORT=`vscXXXXX`\n\n# Move to the data/code directory\ncd /path/to/your/working_directory\n\n# Activate the Python conda environment\nsource /path/to/your/miniconda3/bin/activate your_env_name\n\n# Set GPU usage\nexport CUDA_VISIBLE_DEVICES=0\n\n# Start Ollama server (logging for debugging)\n/path/to/your/llm_server/bin/llm_server_command serve &gt; /path/to/your/results/llm_server_%j.log 2&gt;&1 &\n\n# Wait for Ollama server to be ready (simple loop)\nfor i in {1..15}; do\n    if curl -s http://127.0.0.1:37712/api/tags &gt; /dev/null; then\n        echo \"Ollama server is up!\"\n        break\n    fi\n    sleep 2\ndone\n\n# Double-check server is up before proceeding\nif ! curl -s http://127.0.0.1:xxxx/api/tags &gt; /dev/null; then\n    echo \"Ollama server did not start correctly.\" &gt;&2\n    exit 1\nfi\n\n# Run the Python script\npython /path/to/your/python_scripts/deepseek70b.py\n\necho \"SLURM job finished at $(date)\"\n\n\n\n3. Submit and Monitor Your Job\nSubmit your SLURM job from the terminal:\nsbatch run_llm_symptom_extraction.slurm\nMonitor your job status:\nsqueue -u $USER\nCheck your logs and results in the output directory you specified in your slurm scripts.\n\n\n\n4. Example: Output Result Snapshot\nA typical output from the LLM will look like this:\n[\n  {\n    \"code\": \"250.00\",\n    \"disease\": \"Diabetes mellitus without mention of complication\",\n    \"symptoms\": [\n      \"increased thirst\",\n      \"frequent urination\",\n      \"blurred vision\",\n      \"fatigue\",\n      \"slow-healing sores\",\n      \"unintended weight loss\",\n      \"hunger\",\n      \"dry mouth\",\n      \"headaches\",\n      \"recurrent infections\"\n    ]\n  },\n  {\n    \"code\": \"401.9\",\n    \"disease\": \"Essential hypertension, unspecified\",\n    \"symptoms\": [\n      \"headache\",\n      \"dizziness\",\n      \"nosebleeds\",\n      \"shortness of breath\",\n      \"chest pain\",\n      \"blurred vision\",\n      \"fatigue\",\n      \"nausea\",\n      \"palpitations\",\n      \"confusion\"\n    ]\n  }\n]",
     "crumbs": [
       "Running Jobs"
     ]
@@ -204,19 +204,19 @@
     "href": "vsc_about.html",
     "title": "Running LLMs on HPC for Clinical Symptom Extraction",
     "section": "",
-    "text": "This project demonstrates a scalable approach to generating patient-reported symptom lists for medical conditions using open Large Language Models (LLMs) on the Vlaams Supercomputer (VSC). For a curated set of diseases (ICD codes) sourced from the MIMIC-IV clinical database, we systematically prompt LLMs to produce exactly 10 common symptoms per condition. The structured outputs (JSONL/Parquet) are prepared for downstream analysis including frequency mapping and ontology alignment.\n\n\n\nThrough this workflow, researchers will learn: - HPC job orchestration using SLURM arrays - Batch processing of LLM queries with error handling - Structured output extraction (JSONL/Parquet) - Reproducible research practices - Ethical considerations for clinical NLP\n\n\n\n\n\n\nMIMIC-IV (Medical Information Mart for Intensive Care IV) is a de-identified, publicly accessible database of ICU patient records from Beth Israel Deaconess Medical Center, containing: - Clinical documentation - Diagnostic codes (ICD-9/10) - Vital signs and laboratory measurements - Medication records\n\n\n\n\nCompletion of CITI training or equivalent\nInstitutional approval via PhysioNet\nCompliance with Data Use Agreement (physionet.org/content/mimiciv)\n\n\n\n\nOnly disease names and ICD codes are submitted to LLMs. No patient-level data is transmitted. Source version (mimic-iv-2.2) is documented in data/README.md.",
+    "text": "This project demonstrates a scalable workflow for generating patient-reported symptom lists for medical conditions using open Large Language Models (LLMs) on the Vlaams Supercomputer (VSC).",
     "crumbs": [
-      "Home"
+      "Project Overview"
     ]
   },
   {
     "objectID": "vsc_about.html#research-objective",
     "href": "vsc_about.html#research-objective",
     "title": "Running LLMs on HPC for Clinical Symptom Extraction",
-    "section": "",
-    "text": "This project demonstrates a scalable approach to generating patient-reported symptom lists for medical conditions using open Large Language Models (LLMs) on the Vlaams Supercomputer (VSC). For a curated set of diseases (ICD codes) sourced from the MIMIC-IV clinical database, we systematically prompt LLMs to produce exactly 10 common symptoms per condition. The structured outputs (JSONL/Parquet) are prepared for downstream analysis including frequency mapping and ontology alignment.",
+    "section": "Research Objective",
+    "text": "Research Objective\nFor a curated set of diseases (ICD codes) sourced from the MIMIC-IV clinical database, we systematically prompt open LLMs to produce exactly 10 common symptoms per condition. The outputs are saved in structured formats (JSON/Parquet) for downstream clinical data science.\nThe workflow illustrates how to:\n\nSet up and work efficiently on HPC (High-Performance Computing).\nUnderstand credits and resource allocation on VSC.\nConfigure and prepare the compute environment.\nDownload and manage open-source LLMs for clinical tasks.\nOrchestrate compute jobs using SLURM (including ready-to-use script templates)\nProcess LLM prompts and collect results.\nExtract and structure outputs for analysis (JSONL/Parquet).\nApply best practices for running large-scale jobs on HPC\nAddress basic ethical considerations in generative AI for healthcare",
     "crumbs": [
-      "Home"
+      "Project Overview"
     ]
   },
   {
@@ -233,10 +233,10 @@
     "objectID": "vsc_about.html#data-source-mimic-iv",
     "href": "vsc_about.html#data-source-mimic-iv",
     "title": "Running LLMs on HPC for Clinical Symptom Extraction",
-    "section": "",
-    "text": "MIMIC-IV (Medical Information Mart for Intensive Care IV) is a de-identified, publicly accessible database of ICU patient records from Beth Israel Deaconess Medical Center, containing: - Clinical documentation - Diagnostic codes (ICD-9/10) - Vital signs and laboratory measurements - Medication records\n\n\n\n\nCompletion of CITI training or equivalent\nInstitutional approval via PhysioNet\nCompliance with Data Use Agreement (physionet.org/content/mimiciv)\n\n\n\n\nOnly disease names and ICD codes are submitted to LLMs. No patient-level data is transmitted. Source version (mimic-iv-2.2) is documented in data/README.md.",
+    "section": "Data Source: MIMIC-IV",
+    "text": "Data Source: MIMIC-IV\nMIMIC-IV (Medical Information Mart for Intensive Care IV) is a publicly available, de-identified database containing detailed records from ICU patients, including: - Clinical notes and documentation - Diagnostic codes (ICD-9/ICD-10) - Laboratory and vital sign measurements - Medication and procedure records\n\nData Access Requirements\nIn order to access the data the following have to be fulfilled:\n\nComplete CITI training (or equivalent human subjects research training)\nObtain institutional approval through PhysioNet\nSign and comply with the official MIMIC-IV Data Use Agreement\n\n\nNote:\nIn this workflow, only disease names and ICD codes were submitted to LLMs. No patient-level or identifying data was used or transmitted.",
     "crumbs": [
-      "Home"
+      "Project Overview"
     ]
   },
   {
@@ -244,14 +244,20 @@
     "href": "index.html",
     "title": "Running LLMs on HPC",
     "section": "",
-    "text": "Welcome to Running LLMs on HPC!\nThis site is a practical guide for deploying, managing, and analyzing large language models (LLMs) using the Vlaams Supercomputer (VSC).\n\n\n\n\nProject Overview:\nUnderstand the goals and scope of this project.\nHPC & LLM Basics:\nLearn foundational concepts about high-performance computing and LLMs.\nEnvironment Setup:\nStep-by-step instructions for setting up your VSC environment, downloading models, and managing dependencies.\nRunning Jobs:\nHow to launch SLURM jobs, organize scripts, and capture logs/output.\nBest Practices:\nProven tips for efficient, reproducible, and scalable research on HPC.\n\n\n\n\n\n\nRead the Project Overview to understand the workflow.\nSet up your environment following the Environment Setup section.\nSubmit your first SLURM job using the templates provided.\nExplore Best Practices for optimizing your workflow.\n\n\n\n\n\nThe Vlaams Supercomputer Center (VSC) provides powerful computing resources for research and innovation in Flanders.\nLearn more: VSC User Portal\n\nNavigate using the sidebar to get started!"
+    "text": "This site is a practical guide for deploying, managing, and analyzing large language models (LLMs) using the Vlaams Supercomputer (VSC).\nThis project was completed as part of my internship, under the guidance of Prof. Dr. Dirk Valkenborg and Jimmy Schepers.\nTheir support and mentorship were instrumental in bringing this work to fruition.",
+    "crumbs": [
+      "Home"
+    ]
   },
   {
     "objectID": "index.html#what-youll-find-here",
     "href": "index.html#what-youll-find-here",
     "title": "Running LLMs on HPC",
-    "section": "",
-    "text": "Project Overview:\nUnderstand the goals and scope of this project.\nHPC & LLM Basics:\nLearn foundational concepts about high-performance computing and LLMs.\nEnvironment Setup:\nStep-by-step instructions for setting up your VSC environment, downloading models, and managing dependencies.\nRunning Jobs:\nHow to launch SLURM jobs, organize scripts, and capture logs/output.\nBest Practices:\nProven tips for efficient, reproducible, and scalable research on HPC."
+    "section": "What You’ll Find Here",
+    "text": "What You’ll Find Here\n\nProject Overview:\nUnderstand the goals and scope of this project.\nHPC & LLM Basics:\nLearn foundational concepts about high-performance computing and how to run LLMs.\nEnvironment Setup:\nStep-by-step instructions for setting up your VSC environment, downloading models, and managing dependencies.\nRunning Jobs:\nHow to launch SLURM jobs, organize scripts, and capture logs/output.\nBest Practices:\nProven tips for efficient, reproducible, and scalable research on HPC.",
+    "crumbs": [
+      "Home"
+    ]
   },
   {
     "objectID": "index.html#quick-start",
@@ -264,7 +270,210 @@
     "objectID": "index.html#about-vsc",
     "href": "index.html#about-vsc",
     "title": "Running LLMs on HPC",
+    "section": "About VSC",
+    "text": "About VSC\nThe Vlaams SuperComputer (VSC) provides powerful computing resources for research and innovation in Flanders.\nLearn more: VSC User Portal",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "vsc_about.html#acknowledgments",
+    "href": "vsc_about.html#acknowledgments",
+    "title": "Running LLMs on HPC for Clinical Symptom Extraction",
+    "section": "Acknowledgments",
+    "text": "Acknowledgments\nI would like to express my sincere gratitude to Prof. Dr. Dirk Valkenborg and Jimmy Schepers for their mentorship and support during this internship. Their expertise and encouragement were vital to the success of this work.",
+    "crumbs": [
+      "Project Overview"
+    ]
+  },
+  {
+    "objectID": "vsc_basics.html#where-does-your-data-live",
+    "href": "vsc_basics.html#where-does-your-data-live",
+    "title": "Beginner’s Guide to working with the VSC",
+    "section": "Where does your data live?",
+    "text": "Where does your data live?\n\n$HOME:\n\nFor your code, scripts, software configs, and small data files.\nThis area is backed up and has a storage limit.\nExample path: /user/&lt;vsc_user&gt;\n\n$VSC_DATA:\n\nFor large datasets and important results that need to persist.\nNot backed up by default! Always keep your own backups of essential data.\nExample path: /data/&lt;project&gt;/&lt;vsc_user&gt;\n\n$VSC_SCRATCH:\n\nFor temporary files and fast, intermediate computation results.\nThis space is cleaned up regularly, do not store anything important here.\nExample path: /scratch/&lt;vsc_user&gt;\n\nSee more at VSC Data Storage",
+    "crumbs": [
+      "HPC & LLM Basics"
+    ]
+  },
+  {
+    "objectID": "vsc_basics.html#where-does-your-code-live",
+    "href": "vsc_basics.html#where-does-your-code-live",
+    "title": "Beginner’s Guide to working with the VSC",
+    "section": "Where does your code live?",
+    "text": "Where does your code live?\n\nTypically, you should store scripts and notebooks in your $HOME or $VSC_DATA/scripts/ directory.",
+    "crumbs": [
+      "HPC & LLM Basics"
+    ]
+  },
+  {
+    "objectID": "vsc_basics.html#where-does-your-terminalsession-live",
+    "href": "vsc_basics.html#where-does-your-terminalsession-live",
+    "title": "Beginner’s Guide to working with the VSC",
+    "section": "Where does your terminal/session live?",
+    "text": "Where does your terminal/session live?\n\nWhen you connect with SSH you are on the login node.\nssh &lt;vsc_user&gt;@login.hpc.kuleuven.be\nOnly use the login node for:\n\nSetting up code and environment\nFile transfers (using scp, rsync)\nSubmitting and managing jobs\n\nNever run heavy computation on the login node!\nAll compute tasks must be submitted as jobs.",
+    "crumbs": [
+      "HPC & LLM Basics"
+    ]
+  },
+  {
+    "objectID": "vsc_basics.html#getting-access",
+    "href": "vsc_basics.html#getting-access",
+    "title": "Beginner’s Guide to working with the VSC",
+    "section": "1. Getting Access",
+    "text": "1. Getting Access\nBefore you can use the VSC (Vlaams Supercomputer Center), you must have an account.\nThis section explains who can get access, what you need, and what happens after you apply.\n\nWho can use the VSC?\n\nStudents and researchers at universities or research institutes in Flanders, such as: KU Leuven (@kuleuven.be), UHasselt (@uhasselt.be), UGent (@ugent.be), VUB (@vub.be) and UAntwerpen (@uantwerpen.be)\nYou must use your institutional email address (for example, john.doe@kuleuven.be).\nPersonal emails like @gmail.com or @hotmail.com are not accepted.\nYou must apply through your university, supervisor, or research group.\nPrivate individuals cannot apply directly.\n\n\n\nWhy apply through your institution?\nThe VSC is a shared resource for academic research.\nWhen you apply through your institution: - Your eligibility is checked. - Your use of the cluster is tracked under your research project or group. - You can access shared credits and storage with your team.\n\n\nHow do you apply for a VSC account?\n\nAsk your supervisor or your university’s IT support for the correct application procedure.\nComplete the online application form (usually provided by your institution).\n\nFill in your institutional email, name, and department.\nInclude your research group or project name. (Your supervisor may need to approve your application.)\n\nWait for your confirmation email.\n\nThis email will include your VSC user ID and instructions for logging in.\n\nExample confirmation email:\n\"Welcome to the VSC! Your user ID is vsc12345. \nYou can log in using this username and your institutional password.\"\nWhat do you get after your account is approved?\n\n\nA VSC user ID (e.g., vsc12345). This is your username for logging in.\nA default shell (usually Bash, which is the command-line environment).\nThe login address of your VSC cluster, for example:\nssh vsc12345@login.hpc.kuleuven.be\n\nThis command connects you to the VSC.\nIf you see a prompt like vsc12345@login.hpc:~$, you are successfully logged in and ready to start.\n\n\nWhat does this mean?\nYou are now connected to the VSC login node, where you can set up your environment and submit jobs.\n\n\n\n\nImportant points to remember\n\nNever share your password or user ID with anyone.\nYour access is always linked to a research project or group. This is how resources like credits and storage are managed.\nIf you need help or have problems with your account, contact your local IT support or the VSC Helpdesk.",
+    "crumbs": [
+      "HPC & LLM Basics"
+    ]
+  },
+  {
+    "objectID": "vsc_basics.html#make-a-new-directory",
+    "href": "vsc_basics.html#make-a-new-directory",
+    "title": "Beginner’s Guide to working with the VSC",
+    "section": "# Make a new directory",
+    "text": "# Make a new directory",
+    "crumbs": [
+      "HPC & LLM Basics"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#prerequisites",
+    "href": "vsc_setup.html#prerequisites",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "1.1 Prerequisites",
+    "text": "1.1 Prerequisites\n\nVisual Studio Code (latest version)\nRemote - SSH extension (ms-vscode-remote.remote-ssh)",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#ssh-key-access",
+    "href": "vsc_setup.html#ssh-key-access",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "1.2 SSH Key Access",
+    "text": "1.2 SSH Key Access\nYou need to be able to log into VSC via SSH.\nIf you haven’t set this up, do the following in your local terminal:\nssh-keygen -t ed25519 -C \"your_email@university.be\"\nssh-copy-id vscXXXX@login.hpc.kuleuven.be\n\nReplace vscXXXX with your VSC username.\nAuthorize your key on the VSC firewall.\nTest SSH:\n\nssh vscXXXX@login.hpc.kuleuven.be",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#connect-in-vs-code",
+    "href": "vsc_setup.html#connect-in-vs-code",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "1.3 Connect in VS Code",
+    "text": "1.3 Connect in VS Code\n\nOpen VS Code\nPress F1 (or Ctrl+Shift+P)\nType Remote-SSH: Connect to Host…\nEnter:\n\nssh vscXXXX@login.hpc.kuleuven.be\n\nOpen a New Terminal in VS Code (it will run commands directly on VSC)",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#installing-miniconda",
+    "href": "vsc_setup.html#installing-miniconda",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "3.1 Installing Miniconda",
+    "text": "3.1 Installing Miniconda\nwget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh\nbash Miniconda3-latest-Linux-x86_64.sh\nsource ~/.bashrc\nconda --version",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#load-the-python-module",
+    "href": "vsc_setup.html#load-the-python-module",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "3.2 Load the Python Module",
+    "text": "3.2 Load the Python Module\nmodule load Python/3.10.4-GCCcore-11.3.0",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#create-and-activate-your-environment",
+    "href": "vsc_setup.html#create-and-activate-your-environment",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "3.3 Create and Activate Your Environment",
+    "text": "3.3 Create and Activate Your Environment\nconda create -n ollama_venv python=3.10 -y\nconda activate ollama_venv",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#install-all-neccesary-packages",
+    "href": "vsc_setup.html#install-all-neccesary-packages",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "3.4 Install all neccesary packages",
+    "text": "3.4 Install all neccesary packages\nYou can either use conda or pip for installation purposes.\nconda install \"package\", ...\npip install python-dotenv",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#steps-to-download-an-open-source-ollama-model",
+    "href": "vsc_setup.html#steps-to-download-an-open-source-ollama-model",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "4.1 Steps to Download an Open Source Ollama Model",
+    "text": "4.1 Steps to Download an Open Source Ollama Model\n\nNavigate to your project directory:\n\ncd /data/leuven/377/vscXXXX/\n\nCheck that your SLURM script (ollama_setup.slurm) is present:\n\nls -l ollama_setup.slurm\n\nSubmit the SLURM job to download the model:\n\nsbatch ollama_setup.slurm\nThis command queues your job for execution on the cluster.\n\nMonitor your job’s status:\n\nsqueue -u $USER\n\nWatch live logs to track the download and check for errors:\n\ntail -f ollama_download.out",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#template-for-downloading-open-source-ollama-models-via-slurm",
+    "href": "vsc_setup.html#template-for-downloading-open-source-ollama-models-via-slurm",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "Template for Downloading Open Source Ollama Models via SLURM",
+    "text": "Template for Downloading Open Source Ollama Models via SLURM\nBelow is a sample SLURM script for downloading an Ollama model.\n#!/bin/bash -l        \n#SBATCH --cluster=wice\n#SBATCH --partition=batch_sapphirerapids\n#SBATCH --time=02:00:00\n#SBATCH --mem=128G\n#SBATCH --account=xxxxx\n#SBATCH --output=ollama_download.out\n\n# the directory where models will be stored\nexport OLLAMA_MODELS=/staging/leuven/stg_00191/ollama_models\n\n# the host and port for the Ollama server\nexport OLLAMA_HOST=127.0.0.1:xxxxx\n\n# the Ollama server in the background\n/data/leuven/377/vscXXXX/ollama/bin/ollama serve &\n\n# wait a short time to ensure the server starts properly\nsleep 15\n\n# download the desired model from Ollama's repository\n/data/leuven/377/vscXXXX/ollama/bin/ollama pull deepseek-r1:70b\n\n# wait extra time to ensure the download completes before the job ends\nsleep 600\nWhat Each Section of the script does:\n\nThe #SBATCH lines set SLURM job options:\n\ncluster: Specifies which HPC cluster to use.\npartition: Chooses the spscific harware or queue/resource pool to be used.\ntime: Sets the maximum run time allowed for the job (HH:MM:SS).\nmemory: Allocates the required amount of RAM (e.g., 128G for 128 gigabytes).\naccount: Defines the billing/project group charged for resources.\noutput log: Specifies the file to write job output and errors for monitoring and debugging.\n\nThe export lines configure environment variables so Ollama knows where to store models and how to serve them.\nThe command ’‘/data/leuven/377/vscXXXX/ollama/bin/ollama serve &’’ starts the Ollama server in the background.\nsleep 15 ensures the server has time to start before the model download begins.\n’‘/data/leuven/377/vscXXXX/ollama/bin/ollama pull deepseek-r1:70b’’ downloads the specified model i.e., deepseek-r1:70b\nThe final sleep 600 keeps the job running long enough for the download to complete, preventing early termination.\n\n\n\nNote:\nOnce this process is complete, your model will be fully downloaded and ready for use in your analyses or experiments. If you wish to download multiple models, simply add additional download commands to the same SLURM script, they will be processed in order during the job.",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "index.html#acknowledgments",
+    "href": "index.html#acknowledgments",
+    "title": "Running LLMs on HPC",
+    "section": "Acknowledgments",
+    "text": "Acknowledgments\nI sincerely thank Prof. Dr. Dirk Valkenborg and Jimmy Schepers for their exceptional mentorship throughout this project.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#project-context",
+    "href": "index.html#project-context",
+    "title": "Running LLMs on HPC",
     "section": "",
-    "text": "The Vlaams Supercomputer Center (VSC) provides powerful computing resources for research and innovation in Flanders.\nLearn more: VSC User Portal\n\nNavigate using the sidebar to get started!"
+    "text": "This site is a practical guide for deploying, managing, and analyzing large language models (LLMs) using the Vlaams Supercomputer (VSC).\nThis project was completed as part of my internship, under the guidance of Prof. Dr. Dirk Valkenborg and Jimmy Schepers.\nTheir support and mentorship were instrumental in bringing this work to fruition.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#steps",
+    "href": "vsc_setup.html#steps",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "4.1 Steps",
+    "text": "4.1 Steps\n\nNavigate to your project directory:\n\ncd /data/leuven/377/vscXXXX/\n\nCheck that your SLURM script (ollama_setup.slurm) is present:\n\nls -l ollama_setup.slurm\n\nSubmit the SLURM job to download the model:\n\nsbatch ollama_setup.slurm\nThis command queues your job for execution on the cluster.\n\nMonitor your job’s status:\n\nsqueue -u $USER\n\nWatch live logs to track the download and check for errors:\n\ntail -f ollama_download.out",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "vsc_setup.html#template",
+    "href": "vsc_setup.html#template",
+    "title": "Accessing VSC & Setting Up for LLM Workflows",
+    "section": "4.2 Template",
+    "text": "4.2 Template\nBelow is a sample SLURM script for downloading an Ollama model.\n#!/bin/bash -l        \n#SBATCH --cluster=wice\n#SBATCH --partition=batch_sapphirerapids\n#SBATCH --time=02:00:00\n#SBATCH --mem=128G\n#SBATCH --account=xxxxx\n#SBATCH --output=ollama_download.out\n\n# the directory where models will be stored\nexport OLLAMA_MODELS=/staging/leuven/stg_00191/ollama_models\n\n# the host and port for the Ollama server\nexport OLLAMA_HOST=127.0.0.1:xxxxx\n\n# the Ollama server in the background\n/data/leuven/377/vscXXXX/ollama/bin/ollama serve &\n\n# wait a short time to ensure the server starts properly\nsleep 15\n\n# download the desired model from Ollama's repository\n/data/leuven/377/vscXXXX/ollama/bin/ollama pull deepseek-r1:70b\n\n# wait extra time to ensure the download completes before the job ends\nsleep 600\nWhat Each Section of the script does:\n\nThe #SBATCH lines set SLURM job options:\n\ncluster: Specifies which HPC cluster to use.\npartition: Chooses the spscific harware or queue/resource pool to be used.\ntime: Sets the maximum run time allowed for the job (HH:MM:SS).\nmemory: Allocates the required amount of RAM (e.g., 128G for 128 gigabytes).\naccount: Defines the billing/project group charged for resources.\noutput log: Specifies the file to write job output and errors for monitoring and debugging.\n\nThe export lines configure environment variables so Ollama knows where to store models and how to serve them.\nThe command ’‘/data/leuven/377/vscXXXX/ollama/bin/ollama serve &’’ starts the Ollama server in the background.\nsleep 15 ensures the server has time to start before the model download begins.\n’‘/data/leuven/377/vscXXXX/ollama/bin/ollama pull deepseek-r1:70b’’ downloads the specified model i.e., deepseek-r1:70b\nThe final sleep 600 keeps the job running long enough for the download to complete, preventing early termination.\n\n\n\nNote:\nOnce this process is complete, your model will be fully downloaded and ready for use in your analyses or experiments. If you wish to download multiple models, simply add additional download commands to the same SLURM script, they will be processed in order during the job.",
+    "crumbs": [
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "Running LLMs on HPC",
+    "section": "",
+    "text": "This site is a practical guide for deploying, managing, and analyzing large language models (LLMs) using the Vlaams Supercomputer (VSC).",
+    "crumbs": [
+      "Home"
+    ]
   }
 ]

@@ -1,90 +1,266 @@
 ---
-title: "Basics of Running Jobs on VSC"
+title: "Beginner's Guide to working with the VSC"
 format: html
 ---
 
-# Credits on VSC
+The Vlaams Supercomputer Center (VSC) is a powerful, shared cluster for research.  
+**Before you can run jobs or create a project directory, you need to understand:**  
 
-- VSC uses a credit-based system for resource management.
-    - Credits are consumed according to CPU/GPU hours and memory usage.
-- How to check your credit balance:
-    - Use the `vsc-accounting` command in the terminal.
-    - Or check online: [VSC Accounting Dashboard](https://www.vscentrum.be/nl/accounting)
-- Credits are requested via your institution.
-    - See the [resource application guide](https://www.vscentrum.be/en/access/vsc-projects).
-
----
-
-# SLURM Jobs
-
-- All computation on VSC is managed by the SLURM workload manager.
-    - Prepare a SLURM batch script with resource requests and commands.
-- Example SLURM script:
-
-    ```bash
-    #!/bin/bash
-    #SBATCH --job-name=llm-symptoms
-    #SBATCH --output=logs/%x-%j.out
-    #SBATCH --partition=normal
-    #SBATCH --nodes=1
-    #SBATCH --ntasks=1
-    #SBATCH --cpus-per-task=8
-    #SBATCH --mem=32G
-    #SBATCH --time=02:00:00
-
-    module load Python/3.10.4-GCCcore-11.3.0
-    python scripts/generate_symptoms.py --input data/icd_codes.csv --output data/symptoms_llm_output.jsonl
-    ```
-
-- Submit your job:
-    ```bash
-    sbatch run_job.sh
-    ```
-- Monitor job status:
-    ```bash
-    squeue -u $USER
-    ```
-- More info: [VSC SLURM Jobs](https://www.vscentrum.be/en/user-info/batch-jobs)
+- How to access the cluster
+- How file storage and quotas work
+- How credits and accounting function
+- The basics of navigating with the Linux terminal
+- How to check and manage software modules
+- Why jobs must be submitted (not run directly)
+- Where to find help and documentation
 
 ---
 
-# VSC File System & Architecture
+## 1. Getting Access
 
-- **Where does your data live?**
-    - `$HOME`: For code, scripts, and small files (backed up).
-    - `$VSC_DATA`: For large datasets and results (not backed up by default).
-    - `$VSC_SCRATCH`: For temporary files and outputs (fast, auto-purged).
-    - See [Data Storage at VSC](https://www.vscentrum.be/en/user-info/files-and-data)
+Before you can use the VSC (Vlaams Supercomputer Center), you **must have an account**.  
+This section explains who can get access, what you need, and what happens after you apply.
 
-- **Where does your code live?**
-    - Usually in `$HOME` or in `$VSC_DATA/scripts`.
-    - Use version control (e.g., Git) for code management.
+### Who can use the VSC?
 
-- **Where does your terminal/session live?**
-    - Connect via SSH:
+- **Students and researchers** at universities or research institutes in Flanders, such as: KU Leuven (`@kuleuven.be`), UHasselt (`@uhasselt.be`), UGent (`@ugent.be`), VUB (`@vub.be`) and UAntwerpen (`@uantwerpen.be`)
+- **You must use your institutional email address** (for example, `john.doe@kuleuven.be`).
+- **Personal emails like** `@gmail.com` **or** `@hotmail.com` **are not accepted.**
+- **You must apply through your university, supervisor, or research group.**
+- **Private individuals cannot apply directly.**
+
+### Why apply through your institution?
+
+The VSC is a **shared resource for academic research**.  
+When you apply through your institution:
+- Your eligibility is checked.
+- Your use of the cluster is tracked under your research project or group.
+- You can access shared credits and storage with your team.
+
+### How do you apply for a VSC account?
+
+1. **Ask your supervisor or your university’s IT support** for the correct application procedure.
+2. **Complete the online application form** (usually provided by your institution).
+    - Fill in your **institutional email**, name, and department.
+    - Include your **research group or project name**. (Your supervisor may need to approve your application.)
+3. **Wait for your confirmation email.**
+    - This email will include your VSC **user ID** and instructions for logging in.
+
+    ```text
+    Example confirmation email:
+    "Welcome to the VSC! Your user ID is vsc12345. 
+    You can log in using this username and your institutional password."
+    ```
+### What do you get after your account is approved?
+
+- A **VSC user ID** (e.g., `vsc12345`). This is your username for logging in.
+- A **default shell** (usually Bash, which is the command-line environment).
+- The **login address** of your VSC cluster, for example:
+  
+    ```bash
+    ssh vsc12345@login.hpc.kuleuven.be
+    ```
+    - This command connects you to the VSC.
+    - If you see a prompt like `vsc12345@login.hpc:~$`, you are successfully logged in and ready to start.
+
+    > **What does this mean?**  
+    > You are now connected to the VSC login node, where you can set up your environment and submit jobs.
+    
+### Important points to remember
+
+- **Never share your password or user ID with anyone.**
+- Your access is always linked to a research project or group. This is how resources like credits and storage are managed.
+- **If you need help or have problems with your account,** contact your local IT support or the [VSC Helpdesk](https://www.vscentrum.be/getintouch).
+
+---
+
+# 2. Connecting and Navigating      
+
+Once you have your account, you can **connect to the VSC** using SSH.
+
+### How to connect
+
+- Open a terminal on your computer 
+- Connect using this command:
+
+    ```bash
+    ssh <vsc_user>@login.hpc.kuleuven.be
+    ```
+    - Replace `<vsc_user>` with your own user ID (e.g., `vsc12345`).
+    - After entering your password, you’ll see the command prompt, e.g. `vsc12345@login.hpc:~$`
+
+    > **What does this mean?**  
+    > You are now on the login node. Use this for setup and managing jobs, not for running programs directly.
+
+### Basic navigation commands
+
+Here are some basic Linux commands you’ll use often:
+
+```bash
+pwd          # Show your current directory
+ls           # List files in your current directory
+cd <dir>     # Change to another directory
+mkdir <dir>  # Make a new directory
+```
+--- 
+
+# 3. VSC File System & Architecture
+
+The VSC has a specialized file system. Understanding where your files go is essential to avoid errors and lost work.
+
+## Where does your data live?
+
+- **`$HOME`**:  
+  - For your code, scripts, software configs, and small data files.
+  - This area is **backed up** and has a storage limit.
+  - Example path: `/user/<vsc_user>`
+- **`$VSC_DATA`**:  
+  - For large datasets and important results that need to persist.
+  - **Not backed up by default!** Always keep your own backups of essential data.
+  - Example path: `/data/<project>/<vsc_user>`
+- **`$VSC_SCRATCH`**:  
+  - For temporary files and fast, intermediate computation results.
+  - This space is cleaned up regularly, do not store anything important here.
+  - Example path: `/scratch/<vsc_user>`
+- See more at [VSC Data Storage](https://docs.vscentrum.be/accounts/where_can_i_store_what_kind_of_data.html)
+
+## Where does your code live?
+
+- Typically, you should store scripts and notebooks in your `$HOME` or `$VSC_DATA/scripts/` directory.
+
+## Where does your terminal/session live?
+
+- When you connect with SSH you are on the login node. 
+
+    ```bash
+    ssh <vsc_user>@login.hpc.kuleuven.be
+    ```
+
+- Only use the login node for:
+    - Setting up code and environment
+    - File transfers (using `scp`, `rsync`)
+    - Submitting and managing jobs
+
+- **Never run heavy computation on the login node!**  
+  All compute tasks must be submitted as jobs.
+
+---
+
+# 4. Credits & Accounting
+
+Before you do anything on the Vlaams Supercomputer Center (VSC), it’s vital to understand how **credits** work:
+
+- The VSC uses a credit-based system for managing who can use its resources. 
+  Every computational job you run consumes credits based on:
+    - The number of CPUs/GPUs you request
+    - The amount of memory (RAM) you need
+    - The wall time (maximum job duration) you specify
+
+- **Why do credits matter?**
+    - Credits ensure fair sharing of limited HPC resources among all users and research groups.
+    - When your group or project runs out of credits, you will not be able to submit more jobs until more are allocated.
+    - Be efficient: Always request only the resources and wall time you truly need.
+
+- **How to check your credit balance:**
+    - In your SSH terminal:
+    
+      ```bash
+      $ sam-balance
+      ```
+      
+    - Or check instructions at [VSC Slurm Accounting](https://docs.vscentrum.be/leuven/slurm_accounting.html)
+
+- **How to request more credits:**  
+    - Credits are typically requested at the **project level** by your research supervisor or group lead, not individual level. It can also depend on per case basis.
+    - To apply for a new project or more credits, follow the [Job Credits](https://docs.vscentrum.be/leuven/credits.html).
+    
+---
+ 
+# 5. SLURM Jobs: How Computing Happens on VSC
+
+All heavy computation on VSC happens through a job scheduling system called **SLURM**.  
+You do **not** run heavy programs directly, instead, you write a script and submit it as a job..  
+Here’s what you need to know:
+
+- **Why use SLURM?**
+    - Ensures fair scheduling and distribution of compute resources
+    - Protects the login node from being overloaded
+    - Makes jobs reproducible and trackable
+
+- **The SLURM job workflow:**
+    1. Prepare a SLURM batch script (`.sh` file) describing the resources you need and the commands to run.
+    2. Submit the job to the queue with:
+        
         ```bash
-        ssh <vsc_user>@login.hpc.ugent.be
+        sbatch my_job.sh
         ```
-        - Or see [Accessing VSC](https://www.vscentrum.be/en/user-info/accessing-the-vsc)
-    - Only use the login node for setup, file transfer, and job submission.
-    - Run compute jobs via SLURM, not directly on the login node.
+        
+    3. SLURM waits until resources are available, then runs your job on a compute node.
+    4. Job output and error logs are stored as specified in your script.
+
+- **Managing jobs:**
+    - **Submit a job:**  
+      
+      ```bash
+      sbatch run_job.sh
+      ```
+      
+    - **Monitor status of your job:**  
+      
+      ```bash
+      squeue -u $USER
+      ```
+      
+    - **Cancel a job:**  
+      
+      ```bash
+      scancel <job_id>
+      ```
+      
+    - More info: [VSC Running Jobs in Slurm](https://docs.vscentrum.be/compute/jobs/running_jobs.html)
+
+---  
+
+
+# 6. Linux Command-Line Essentials
+
+You’ll do almost everything with commands in the terminal. Here are some that are commonly used:
+
+| Command      | Purpose                |
+|--------------|------------------------|
+| `ls`         | List files             |
+| `cd <dir>`   | Change directory       |
+| `mkdir <dir>`| Make new directory     |
+| `cp`         | Copy files             |
+| `mv`         | Move/rename files      |
+| `rm`         | Remove (delete) files  |
+| `nano`       | Simple text editor     |
+| `chmod`      | Change permissions     |
+
+> **Tip:** Organize your files into folders for code, data, logs, and results.
+
+---
+
+# 7. Software Modules
+
+On the VSC, you load software using a module system. You can do this using the commands below:
+   
+    ```bash
+    module avail           # See available modules
+    module load Python/3.10.4-GCCcore-11.3.0
+    module list            # Show loaded modules
+    module purge           # Unload all modules
+    ```
+    
+- For some projects like in our case we can also use **Conda** or Python virtual environments.
 
 ---
 
 # Useful Links
 
-- [VSC Portal](https://www.vscentrum.be/en/)
-- [VSC Documentation](https://docs.vscentrum.be/)
-- [Batch Jobs & SLURM](https://www.vscentrum.be/en/user-info/batch-jobs)
-- [Data Storage](https://www.vscentrum.be/en/user-info/files-and-data)
-- [Requesting Resources](https://www.vscentrum.be/en/access/vsc-projects)
-- [VSC Support](https://www.vscentrum.be/en/user-info/support)
+- [VSC Portal Dashboard](https://ondemand.hpc.kuleuven.be/pun/sys/dashboard/)
+- [VSC Compute](https://docs.vscentrum.be/compute/index.html)
+- [VSC Data](https://docs.vscentrum.be/data/index.html)
 
 ---
-
-# Tips
-
-- Organize your project with separate folders for code, data, and logs.
-- Monitor your credit and storage usage.
-- Contact your institution’s VSC support desk for advanced assistance.
 

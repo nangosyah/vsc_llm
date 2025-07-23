@@ -5,8 +5,10 @@ website:
   title: "Running LLMs on HPC"
   sidebar:
     contents:
-      - href: vsc_about.qmd
+      - href: index.qmd
         text: Home
+      - href: vsc_about.qmd
+        text: Project Overview
       - href: vsc_basics.qmd
         text: HPC & LLM Basics
       - href: vsc_setup.qmd
@@ -15,9 +17,10 @@ website:
         text: Running Jobs
       - href: vsc_jobs.qmd
         text: Best Practices
-  
 
 format:
   html:
-    theme: [cosmo, custom.scss]
+    theme: 
+      - cosmo
+      - custom.scss
     toc: true

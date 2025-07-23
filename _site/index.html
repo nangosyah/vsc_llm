@@ -6,6 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Tom Wellard Nangosyah">
+<meta name="dcterms.date" content="2025-07-20">
 
 <title>Running LLMs on HPC</title>
 <style>
@@ -79,9 +81,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      Running LLMs on HPC
-      </li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Home</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -108,8 +108,14 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vsc_about.html" class="sidebar-item-text sidebar-link">
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./vsc_about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project Overview</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -146,12 +152,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome">Welcome</a>
-  <ul class="collapse">
+  <li><a href="#project-context" id="toc-project-context" class="nav-link active" data-scroll-target="#project-context">Project Context</a></li>
   <li><a href="#what-youll-find-here" id="toc-what-youll-find-here" class="nav-link" data-scroll-target="#what-youll-find-here">What You’ll Find Here</a></li>
-  <li><a href="#quick-start" id="toc-quick-start" class="nav-link" data-scroll-target="#quick-start">Quick Start</a></li>
   <li><a href="#about-vsc" id="toc-about-vsc" class="nav-link" data-scroll-target="#about-vsc">About VSC</a></li>
-  </ul></li>
+  <li><a href="#acknowledgments" id="toc-acknowledgments" class="nav-link" data-scroll-target="#acknowledgments">Acknowledgments</a></li>
   </ul>
 </nav>
     </div>
@@ -167,7 +171,19 @@ ul.task-list li input[type="checkbox"] {
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Tom Wellard Nangosyah </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 20, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -177,46 +193,41 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="welcome" class="level1">
-<h1>Welcome</h1>
-<p>Welcome to <strong>Running LLMs on HPC</strong>!<br>
-This site is a practical guide for deploying, managing, and analyzing large language models (LLMs) using the Vlaams Supercomputer (VSC).</p>
+<section id="project-context" class="level2">
+<h2 class="anchored" data-anchor-id="project-context">Project Context</h2>
+<p>This site is a practical guide for deploying, managing, and analyzing large language models (LLMs) using the Vlaams Supercomputer (VSC).</p>
+<p>This project was completed as part of my internship, under the guidance of <a href="https://www.uhasselt.be/nl/wie-is-wie/dirk-valkenborg">Prof.&nbsp;Dr.&nbsp;Dirk Valkenborg</a> and Jimmy Schepers.<br>
+Their support and mentorship were instrumental in bringing this work to fruition.</p>
 <hr>
+</section>
 <section id="what-youll-find-here" class="level2">
 <h2 class="anchored" data-anchor-id="what-youll-find-here">What You’ll Find Here</h2>
 <ul>
-<li><p><strong>Project Overview:</strong><br>
-Understand the goals and scope of this project.</p></li>
-<li><p><strong>HPC &amp; LLM Basics:</strong><br>
-Learn foundational concepts about high-performance computing and LLMs.</p></li>
-<li><p><strong>Environment Setup:</strong><br>
-Step-by-step instructions for setting up your VSC environment, downloading models, and managing dependencies.</p></li>
-<li><p><strong>Running Jobs:</strong><br>
-How to launch SLURM jobs, organize scripts, and capture logs/output.</p></li>
-<li><p><strong>Best Practices:</strong><br>
-Proven tips for efficient, reproducible, and scalable research on HPC.</p></li>
+<li><strong>Project Overview:</strong><br>
+Understand the goals and scope of this project.</li>
+<li><strong>HPC &amp; LLM Basics:</strong><br>
+Learn foundational concepts about high-performance computing and how to run LLMs.</li>
+<li><strong>Environment Setup:</strong><br>
+Step-by-step instructions for setting up your VSC environment, downloading models, and managing dependencies.</li>
+<li><strong>Running Jobs:</strong><br>
+How to launch SLURM jobs, organize scripts, and capture logs/output.</li>
+<li><strong>Best Practices:</strong><br>
+Proven tips for efficient, reproducible, and scalable research on HPC.</li>
 </ul>
-<hr>
-</section>
-<section id="quick-start" class="level2">
-<h2 class="anchored" data-anchor-id="quick-start">Quick Start</h2>
-<ol type="1">
-<li><strong>Read the Project Overview</strong> to understand the workflow.</li>
-<li><strong>Set up your environment</strong> following the Environment Setup section.</li>
-<li><strong>Submit your first SLURM job</strong> using the templates provided.</li>
-<li><strong>Explore Best Practices</strong> for optimizing your workflow.</li>
-</ol>
 <hr>
 </section>
 <section id="about-vsc" class="level2">
 <h2 class="anchored" data-anchor-id="about-vsc">About VSC</h2>
-<p>The <strong>Vlaams Supercomputer Center (VSC)</strong> provides powerful computing resources for research and innovation in Flanders.<br>
+<p>The <strong>Vlaams SuperComputer (VSC)</strong> provides powerful computing resources for research and innovation in Flanders.<br>
 Learn more: <a href="https://www.vscentrum.be/en/">VSC User Portal</a></p>
 <hr>
-<p><em>Navigate using the sidebar to get started!</em></p>
-
-
 </section>
+<section id="acknowledgments" class="level2">
+<h2 class="anchored" data-anchor-id="acknowledgments">Acknowledgments</h2>
+<p>I sincerely thank <strong>Prof.&nbsp;Dr.&nbsp;Dirk Valkenborg</strong> and <strong>Jimmy Schepers</strong> for their exceptional mentorship throughout this project.</p>
+<hr>
+
+
 </section>
 
 </main> <!-- /main -->

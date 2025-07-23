@@ -106,8 +106,14 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vsc_about.html" class="sidebar-item-text sidebar-link">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./vsc_about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project Overview</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -139,23 +145,8 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#resource-management" id="toc-resource-management" class="nav-link" data-scroll-target="#resource-management">1. Resource Management</a></li>
-  <li><a href="#job-scheduling-and-slurm-usage" id="toc-job-scheduling-and-slurm-usage" class="nav-link" data-scroll-target="#job-scheduling-and-slurm-usage">2. Job Scheduling and SLURM Usage</a></li>
-  <li><a href="#data-handling" id="toc-data-handling" class="nav-link" data-scroll-target="#data-handling">3. Data Handling</a></li>
-  <li><a href="#code-and-environment-management" id="toc-code-and-environment-management" class="nav-link" data-scroll-target="#code-and-environment-management">4. Code and Environment Management</a></li>
-  <li><a href="#reproducibility" id="toc-reproducibility" class="nav-link" data-scroll-target="#reproducibility">5. Reproducibility</a></li>
-  <li><a href="#error-handling-and-debugging" id="toc-error-handling-and-debugging" class="nav-link" data-scroll-target="#error-handling-and-debugging">6. Error Handling and Debugging</a></li>
-  <li><a href="#collaboration-and-documentation" id="toc-collaboration-and-documentation" class="nav-link" data-scroll-target="#collaboration-and-documentation">7. Collaboration and Documentation</a></li>
-  <li><a href="#useful-links" id="toc-useful-links" class="nav-link" data-scroll-target="#useful-links">Useful Links</a></li>
-  <li><a href="#tips" id="toc-tips" class="nav-link" data-scroll-target="#tips">Tips</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -179,101 +170,27 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introduction" class="level1">
-<h1>Introduction</h1>
 <ul>
-<li>High-Performance Computing (HPC) enables efficient training and evaluation of large models.</li>
-<li>Following best practices maximizes resource usage, minimizes job failures, and ensures reproducibility.</li>
+<li><p><strong>Request Only What You Need:</strong><br>
+Estimate resources and adjust based on past jobs.</p></li>
+<li><p><strong>Organize Jobs &amp; Logs:</strong><br>
+Use descriptive job names and structured output folders.</p></li>
+<li><p><strong>Use the Right Storage:</strong><br>
+Place large and temporary files in <code>$VSC_DATA</code> and <code>$VSC_SCRATCH</code>.</p></li>
+<li><p><strong>Manage Environments:</strong><br>
+Use modules/conda and document dependencies. Version-control your code.</p></li>
+<li><p><strong>Promote Reproducibility:</strong><br>
+Save SLURM scripts, configs, and note job parameters.</p></li>
+<li><p><strong>Debug Efficiently:</strong><br>
+Check logs, use interactive/test jobs, and fail fast on errors.</p></li>
+<li><p><strong>Document &amp; Share:</strong><br>
+Keep READMEs and notebooks. Organize scripts, configs, and results.</p></li>
+<li><p><strong>Clean Up:</strong><br>
+Remove unused data and files regularly.</p></li>
 </ul>
 <hr>
-</section>
-<section id="resource-management" class="level1">
-<h1>1. Resource Management</h1>
-<ul>
-<li>Request only the resources you need (CPUs, GPUs, memory, wall time).</li>
-<li>Use benchmarking and profiling to estimate resource requirements.</li>
-<li>Monitor your jobs and adjust future requests accordingly.</li>
-<li>Release resources as soon as jobs finish.</li>
-</ul>
-<hr>
-</section>
-<section id="job-scheduling-and-slurm-usage" class="level1">
-<h1>2. Job Scheduling and SLURM Usage</h1>
-<ul>
-<li>Use SLURM array jobs for large-scale parameter sweeps or cross-validation.</li>
-<li>Name your jobs descriptively with <code>#SBATCH --job-name</code>.</li>
-<li>Organize job outputs and logs using <code>#SBATCH --output</code> and subfolders.</li>
-<li>Regularly check job status (<code>squeue -u $USER</code>) and manage queued/running jobs (<code>scancel</code>).</li>
-</ul>
-<hr>
-</section>
-<section id="data-handling" class="level1">
-<h1>3. Data Handling</h1>
-<ul>
-<li>Store large datasets in the appropriate HPC data storage (e.g., <code>$VSC_DATA</code>).</li>
-<li>Avoid reading/writing directly to your home directory for big files.</li>
-<li>Use the scratch directory (<code>$VSC_SCRATCH</code>) for temporary files and clean up after jobs finish.</li>
-<li>Pre-stage data before computation; transfer results after job completion.</li>
-</ul>
-<hr>
-</section>
-<section id="code-and-environment-management" class="level1">
-<h1>4. Code and Environment Management</h1>
-<ul>
-<li>Use environment modules or containers to manage dependencies.</li>
-<li>Document your environment (module load commands, requirements.txt, etc.).</li>
-<li>Use version control (e.g., Git) for all code.</li>
-<li>Test your code with small jobs before scaling up.</li>
-</ul>
-<hr>
-</section>
-<section id="reproducibility" class="level1">
-<h1>5. Reproducibility</h1>
-<ul>
-<li>Record job parameters, random seeds, software versions, and output locations.</li>
-<li>Store SLURM scripts and configuration files with your results.</li>
-<li>Use automated logging and metadata files.</li>
-</ul>
-<hr>
-</section>
-<section id="error-handling-and-debugging" class="level1">
-<h1>6. Error Handling and Debugging</h1>
-<ul>
-<li>Use <code>--mail-type=FAIL</code> in SLURM to get failure notifications.</li>
-<li>Check logs regularly for errors and warnings.</li>
-<li>Start with interactive sessions for debugging before submitting large jobs.</li>
-<li>Write jobs to fail fast if requirements are not met (e.g., missing data or modules).</li>
-</ul>
-<hr>
-</section>
-<section id="collaboration-and-documentation" class="level1">
-<h1>7. Collaboration and Documentation</h1>
-<ul>
-<li>Document all steps in a README or as Quarto/RMarkdown notebooks.</li>
-<li>Organize scripts, configs, and data in clear directories.</li>
-<li>Share and backup results promptly.</li>
-</ul>
-<hr>
-</section>
-<section id="useful-links" class="level1">
-<h1>Useful Links</h1>
-<ul>
-<li><a href="https://docs.vscentrum.be/">VSC User Documentation</a></li>
-<li><a href="https://www.vscentrum.be/en/user-info/batch-jobs">SLURM Job Submission Guide</a></li>
-<li><a href="https://www.vscentrum.be/en/user-info/files-and-data">Data Storage Guidelines</a></li>
-</ul>
-<hr>
-</section>
-<section id="tips" class="level1">
-<h1>Tips</h1>
-<ul>
-<li>Always do a test run before scaling up.</li>
-<li>Clean up your data and scratch spaces.</li>
-<li>Communicate with your HPC support team for questions or unusual errors.</li>
-</ul>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

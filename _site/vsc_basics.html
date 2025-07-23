@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Basics of Running Jobs on VSC – Running LLMs on HPC</title>
+<title>Beginner’s Guide to working with the VSC – Running LLMs on HPC</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -140,8 +140,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./vsc_about.html" class="sidebar-item-text sidebar-link">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./vsc_about.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Project Overview</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -178,11 +184,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#credits-on-vsc" id="toc-credits-on-vsc" class="nav-link active" data-scroll-target="#credits-on-vsc">Credits on VSC</a></li>
-  <li><a href="#slurm-jobs" id="toc-slurm-jobs" class="nav-link" data-scroll-target="#slurm-jobs">SLURM Jobs</a></li>
-  <li><a href="#vsc-file-system-architecture" id="toc-vsc-file-system-architecture" class="nav-link" data-scroll-target="#vsc-file-system-architecture">VSC File System &amp; Architecture</a></li>
+  <li><a href="#getting-access" id="toc-getting-access" class="nav-link active" data-scroll-target="#getting-access">1. Getting Access</a>
+  <ul class="collapse">
+  <li><a href="#who-can-use-the-vsc" id="toc-who-can-use-the-vsc" class="nav-link" data-scroll-target="#who-can-use-the-vsc">Who can use the VSC?</a></li>
+  <li><a href="#why-apply-through-your-institution" id="toc-why-apply-through-your-institution" class="nav-link" data-scroll-target="#why-apply-through-your-institution">Why apply through your institution?</a></li>
+  <li><a href="#how-do-you-apply-for-a-vsc-account" id="toc-how-do-you-apply-for-a-vsc-account" class="nav-link" data-scroll-target="#how-do-you-apply-for-a-vsc-account">How do you apply for a VSC account?</a></li>
+  <li><a href="#important-points-to-remember" id="toc-important-points-to-remember" class="nav-link" data-scroll-target="#important-points-to-remember">Important points to remember</a></li>
+  </ul></li>
+  <li><a href="#connecting-and-navigating" id="toc-connecting-and-navigating" class="nav-link" data-scroll-target="#connecting-and-navigating">2. Connecting and Navigating</a>
+  <ul class="collapse">
+  <li><a href="#how-to-connect" id="toc-how-to-connect" class="nav-link" data-scroll-target="#how-to-connect">How to connect</a></li>
+  <li><a href="#basic-navigation-commands" id="toc-basic-navigation-commands" class="nav-link" data-scroll-target="#basic-navigation-commands">Basic navigation commands</a></li>
+  </ul></li>
+  <li><a href="#vsc-file-system-architecture" id="toc-vsc-file-system-architecture" class="nav-link" data-scroll-target="#vsc-file-system-architecture">3. VSC File System &amp; Architecture</a>
+  <ul class="collapse">
+  <li><a href="#where-does-your-data-live" id="toc-where-does-your-data-live" class="nav-link" data-scroll-target="#where-does-your-data-live">Where does your data live?</a></li>
+  <li><a href="#where-does-your-code-live" id="toc-where-does-your-code-live" class="nav-link" data-scroll-target="#where-does-your-code-live">Where does your code live?</a></li>
+  <li><a href="#where-does-your-terminalsession-live" id="toc-where-does-your-terminalsession-live" class="nav-link" data-scroll-target="#where-does-your-terminalsession-live">Where does your terminal/session live?</a></li>
+  </ul></li>
+  <li><a href="#credits-accounting" id="toc-credits-accounting" class="nav-link" data-scroll-target="#credits-accounting">4. Credits &amp; Accounting</a></li>
+  <li><a href="#slurm-jobs-how-computing-happens-on-vsc" id="toc-slurm-jobs-how-computing-happens-on-vsc" class="nav-link" data-scroll-target="#slurm-jobs-how-computing-happens-on-vsc">5. SLURM Jobs: How Computing Happens on VSC</a></li>
+  <li><a href="#linux-command-line-essentials" id="toc-linux-command-line-essentials" class="nav-link" data-scroll-target="#linux-command-line-essentials">6. Linux Command-Line Essentials</a></li>
+  <li><a href="#software-modules" id="toc-software-modules" class="nav-link" data-scroll-target="#software-modules">7. Software Modules</a></li>
   <li><a href="#useful-links" id="toc-useful-links" class="nav-link" data-scroll-target="#useful-links">Useful Links</a></li>
-  <li><a href="#tips" id="toc-tips" class="nav-link" data-scroll-target="#tips">Tips</a></li>
   </ul>
 </nav>
     </div>
@@ -191,7 +215,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Basics of Running Jobs on VSC</h1>
+<h1 class="title">Beginner’s Guide to working with the VSC</h1>
 </div>
 
 
@@ -208,97 +232,294 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="credits-on-vsc" class="level1">
-<h1>Credits on VSC</h1>
+<p>The Vlaams Supercomputer Center (VSC) is a powerful, shared cluster for research.<br>
+<strong>Before you can run jobs or create a project directory, you need to understand:</strong></p>
 <ul>
-<li>VSC uses a credit-based system for resource management.
+<li>How to access the cluster</li>
+<li>How file storage and quotas work</li>
+<li>How credits and accounting function</li>
+<li>The basics of navigating with the Linux terminal</li>
+<li>How to check and manage software modules</li>
+<li>Why jobs must be submitted (not run directly)</li>
+<li>Where to find help and documentation</li>
+</ul>
+<hr>
+<section id="getting-access" class="level2">
+<h2 class="anchored" data-anchor-id="getting-access">1. Getting Access</h2>
+<p>Before you can use the VSC (Vlaams Supercomputer Center), you <strong>must have an account</strong>.<br>
+This section explains who can get access, what you need, and what happens after you apply.</p>
+<section id="who-can-use-the-vsc" class="level3">
+<h3 class="anchored" data-anchor-id="who-can-use-the-vsc">Who can use the VSC?</h3>
 <ul>
-<li>Credits are consumed according to CPU/GPU hours and memory usage.</li>
+<li><strong>Students and researchers</strong> at universities or research institutes in Flanders, such as: KU Leuven (<code>@kuleuven.be</code>), UHasselt (<code>@uhasselt.be</code>), UGent (<code>@ugent.be</code>), VUB (<code>@vub.be</code>) and UAntwerpen (<code>@uantwerpen.be</code>)</li>
+<li><strong>You must use your institutional email address</strong> (for example, <code>john.doe@kuleuven.be</code>).</li>
+<li><strong>Personal emails like</strong> <code>@gmail.com</code> <strong>or</strong> <code>@hotmail.com</code> <strong>are not accepted.</strong></li>
+<li><strong>You must apply through your university, supervisor, or research group.</strong></li>
+<li><strong>Private individuals cannot apply directly.</strong></li>
+</ul>
+</section>
+<section id="why-apply-through-your-institution" class="level3">
+<h3 class="anchored" data-anchor-id="why-apply-through-your-institution">Why apply through your institution?</h3>
+<p>The VSC is a <strong>shared resource for academic research</strong>.<br>
+When you apply through your institution: - Your eligibility is checked. - Your use of the cluster is tracked under your research project or group. - You can access shared credits and storage with your team.</p>
+</section>
+<section id="how-do-you-apply-for-a-vsc-account" class="level3">
+<h3 class="anchored" data-anchor-id="how-do-you-apply-for-a-vsc-account">How do you apply for a VSC account?</h3>
+<ol type="1">
+<li><strong>Ask your supervisor or your university’s IT support</strong> for the correct application procedure.</li>
+<li><strong>Complete the online application form</strong> (usually provided by your institution).
+<ul>
+<li>Fill in your <strong>institutional email</strong>, name, and department.</li>
+<li>Include your <strong>research group or project name</strong>. (Your supervisor may need to approve your application.)</li>
 </ul></li>
-<li>How to check your credit balance:
+<li><strong>Wait for your confirmation email.</strong>
 <ul>
-<li>Use the <code>vsc-accounting</code> command in the terminal.</li>
-<li>Or check online: <a href="https://www.vscentrum.be/nl/accounting">VSC Accounting Dashboard</a></li>
-</ul></li>
-<li>Credits are requested via your institution.
+<li>This email will include your VSC <strong>user ID</strong> and instructions for logging in.</li>
+</ul>
+<pre class="text"><code>Example confirmation email:
+"Welcome to the VSC! Your user ID is vsc12345. 
+You can log in using this username and your institutional password."</code></pre>
+<h3 id="what-do-you-get-after-your-account-is-approved" class="anchored">What do you get after your account is approved?</h3></li>
+</ol>
 <ul>
-<li>See the <a href="https://www.vscentrum.be/en/access/vsc-projects">resource application guide</a>.</li>
-</ul></li>
+<li><p>A <strong>VSC user ID</strong> (e.g., <code>vsc12345</code>). This is your username for logging in.</p></li>
+<li><p>A <strong>default shell</strong> (usually Bash, which is the command-line environment).</p></li>
+<li><p>The <strong>login address</strong> of your VSC cluster, for example:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> vsc12345@login.hpc.kuleuven.be</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>This command connects you to the VSC.</li>
+<li>If you see a prompt like <code>vsc12345@login.hpc:~$</code>, you are successfully logged in and ready to start.</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>What does this mean?</strong><br>
+You are now connected to the VSC login node, where you can set up your environment and submit jobs.</p>
+</blockquote></li>
+</ul>
+</section>
+<section id="important-points-to-remember" class="level3">
+<h3 class="anchored" data-anchor-id="important-points-to-remember">Important points to remember</h3>
+<ul>
+<li><strong>Never share your password or user ID with anyone.</strong></li>
+<li>Your access is always linked to a research project or group. This is how resources like credits and storage are managed.</li>
+<li><strong>If you need help or have problems with your account,</strong> contact your local IT support or the <a href="https://www.vscentrum.be/getintouch">VSC Helpdesk</a>.</li>
 </ul>
 <hr>
 </section>
-<section id="slurm-jobs" class="level1">
-<h1>SLURM Jobs</h1>
+</section>
+<section id="connecting-and-navigating" class="level1">
+<h1>2. Connecting and Navigating</h1>
+<p>Once you have your account, you can <strong>connect to the VSC</strong> using SSH.</p>
+<section id="how-to-connect" class="level3">
+<h3 class="anchored" data-anchor-id="how-to-connect">How to connect</h3>
 <ul>
-<li><p>All computation on VSC is managed by the SLURM workload manager.</p>
+<li><p>Open a terminal on your computer</p></li>
+<li><p>Connect using this command:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="op">&lt;</span>vsc_user<span class="op">&gt;</span>@login.hpc.kuleuven.be</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li>Prepare a SLURM batch script with resource requests and commands.</li>
-</ul></li>
-<li><p>Example SLURM script:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=llm-symptoms</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=logs/%x-%j.out</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --partition=normal</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --nodes=1</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=1</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=8</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=32G</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=02:00:00</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load Python/3.10.4-GCCcore-11.3.0</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/generate_symptoms.py <span class="at">--input</span> data/icd_codes.csv <span class="at">--output</span> data/symptoms_llm_output.jsonl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>Submit your job: <code>bash     sbatch run_job.sh</code></p></li>
-<li><p>Monitor job status: <code>bash     squeue -u $USER</code></p></li>
-<li><p>More info: <a href="https://www.vscentrum.be/en/user-info/batch-jobs">VSC SLURM Jobs</a></p></li>
+<li>Replace <code>&lt;vsc_user&gt;</code> with your own user ID (e.g., <code>vsc12345</code>).</li>
+<li>After entering your password, you’ll see the command prompt, e.g.&nbsp;<code>vsc12345@login.hpc:~$</code></li>
 </ul>
+<blockquote class="blockquote">
+<p><strong>What does this mean?</strong><br>
+You are now on the login node. Use this for setup and managing jobs, not for running programs directly.</p>
+</blockquote></li>
+</ul>
+</section>
+<section id="basic-navigation-commands" class="level3">
+<h3 class="anchored" data-anchor-id="basic-navigation-commands">Basic navigation commands</h3>
+<p>Here are some basic Linux commands you’ll use often:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span>          <span class="co"># Show your current directory</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>           <span class="co"># List files in your current directory</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="op">&lt;</span>dir<span class="op">&gt;</span>     <span class="co"># Change to another directory</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="op">&lt;</span>dir<span class="op">&gt;</span>  <span class="co"># Make a new directory</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
+</section>
 </section>
 <section id="vsc-file-system-architecture" class="level1">
-<h1>VSC File System &amp; Architecture</h1>
+<h1>3. VSC File System &amp; Architecture</h1>
+<p>The VSC has a specialized file system. Understanding where your files go is essential to avoid errors and lost work.</p>
+<section id="where-does-your-data-live" class="level2">
+<h2 class="anchored" data-anchor-id="where-does-your-data-live">Where does your data live?</h2>
 <ul>
-<li><strong>Where does your data live?</strong>
+<li><strong><code>$HOME</code></strong>:
 <ul>
-<li><code>$HOME</code>: For code, scripts, and small files (backed up).</li>
-<li><code>$VSC_DATA</code>: For large datasets and results (not backed up by default).</li>
-<li><code>$VSC_SCRATCH</code>: For temporary files and outputs (fast, auto-purged).</li>
-<li>See <a href="https://www.vscentrum.be/en/user-info/files-and-data">Data Storage at VSC</a></li>
+<li>For your code, scripts, software configs, and small data files.</li>
+<li>This area is <strong>backed up</strong> and has a storage limit.</li>
+<li>Example path: <code>/user/&lt;vsc_user&gt;</code></li>
 </ul></li>
-<li><strong>Where does your code live?</strong>
+<li><strong><code>$VSC_DATA</code></strong>:
 <ul>
-<li>Usually in <code>$HOME</code> or in <code>$VSC_DATA/scripts</code>.</li>
-<li>Use version control (e.g., Git) for code management.</li>
+<li>For large datasets and important results that need to persist.</li>
+<li><strong>Not backed up by default!</strong> Always keep your own backups of essential data.</li>
+<li>Example path: <code>/data/&lt;project&gt;/&lt;vsc_user&gt;</code></li>
 </ul></li>
-<li><strong>Where does your terminal/session live?</strong>
+<li><strong><code>$VSC_SCRATCH</code></strong>:
 <ul>
-<li>Connect via SSH: <code>bash       ssh &lt;vsc_user&gt;@login.hpc.ugent.be</code>
+<li>For temporary files and fast, intermediate computation results.</li>
+<li>This space is cleaned up regularly, do not store anything important here.</li>
+<li>Example path: <code>/scratch/&lt;vsc_user&gt;</code></li>
+</ul></li>
+<li>See more at <a href="https://docs.vscentrum.be/accounts/where_can_i_store_what_kind_of_data.html">VSC Data Storage</a></li>
+</ul>
+</section>
+<section id="where-does-your-code-live" class="level2">
+<h2 class="anchored" data-anchor-id="where-does-your-code-live">Where does your code live?</h2>
 <ul>
-<li>Or see <a href="https://www.vscentrum.be/en/user-info/accessing-the-vsc">Accessing VSC</a></li>
+<li>Typically, you should store scripts and notebooks in your <code>$HOME</code> or <code>$VSC_DATA/scripts/</code> directory.</li>
+</ul>
+</section>
+<section id="where-does-your-terminalsession-live" class="level2">
+<h2 class="anchored" data-anchor-id="where-does-your-terminalsession-live">Where does your terminal/session live?</h2>
+<ul>
+<li><p>When you connect with SSH you are on the login node.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="op">&lt;</span>vsc_user<span class="op">&gt;</span>@login.hpc.kuleuven.be</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Only use the login node for:</p>
+<ul>
+<li>Setting up code and environment</li>
+<li>File transfers (using <code>scp</code>, <code>rsync</code>)</li>
+<li>Submitting and managing jobs</li>
 </ul></li>
-<li>Only use the login node for setup, file transfer, and job submission.</li>
-<li>Run compute jobs via SLURM, not directly on the login node.</li>
+<li><p><strong>Never run heavy computation on the login node!</strong><br>
+All compute tasks must be submitted as jobs.</p></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="credits-accounting" class="level1">
+<h1>4. Credits &amp; Accounting</h1>
+<p>Before you do anything on the Vlaams Supercomputer Center (VSC), it’s vital to understand how <strong>credits</strong> work:</p>
+<ul>
+<li>The VSC uses a credit-based system for managing who can use its resources. Every computational job you run consumes credits based on:
+<ul>
+<li>The number of CPUs/GPUs you request</li>
+<li>The amount of memory (RAM) you need</li>
+<li>The wall time (maximum job duration) you specify</li>
 </ul></li>
+<li><strong>Why do credits matter?</strong>
+<ul>
+<li>Credits ensure fair sharing of limited HPC resources among all users and research groups.</li>
+<li>When your group or project runs out of credits, you will not be able to submit more jobs until more are allocated.</li>
+<li>Be efficient: Always request only the resources and wall time you truly need.</li>
+</ul></li>
+<li><strong>How to check your credit balance:</strong>
+<ul>
+<li><p>In your SSH terminal:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sam-balance</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Or check instructions at <a href="https://docs.vscentrum.be/leuven/slurm_accounting.html">VSC Slurm Accounting</a></p></li>
+</ul></li>
+<li><strong>How to request more credits:</strong>
+<ul>
+<li>Credits are typically requested at the <strong>project level</strong> by your research supervisor or group lead, not individual level. It can also depend on per case basis.</li>
+<li>To apply for a new project or more credits, follow the <a href="https://docs.vscentrum.be/leuven/credits.html">Job Credits</a>.</li>
+</ul></li>
+</ul>
+<hr>
+</section>
+<section id="slurm-jobs-how-computing-happens-on-vsc" class="level1">
+<h1>5. SLURM Jobs: How Computing Happens on VSC</h1>
+<p>All heavy computation on VSC happens through a job scheduling system called <strong>SLURM</strong>.<br>
+You do <strong>not</strong> run heavy programs directly, instead, you write a script and submit it as a job..<br>
+Here’s what you need to know:</p>
+<ul>
+<li><strong>Why use SLURM?</strong>
+<ul>
+<li>Ensures fair scheduling and distribution of compute resources</li>
+<li>Protects the login node from being overloaded</li>
+<li>Makes jobs reproducible and trackable</li>
+</ul></li>
+<li><strong>The SLURM job workflow:</strong>
+<ol type="1">
+<li><p>Prepare a SLURM batch script (<code>.sh</code> file) describing the resources you need and the commands to run.</p></li>
+<li><p>Submit the job to the queue with:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> my_job.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>SLURM waits until resources are available, then runs your job on a compute node.</p></li>
+<li><p>Job output and error logs are stored as specified in your script.</p></li>
+</ol></li>
+<li><strong>Managing jobs:</strong>
+<ul>
+<li><p><strong>Submit a job:</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> run_job.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><strong>Monitor status of your job:</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">squeue</span> <span class="at">-u</span> <span class="va">$USER</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><strong>Cancel a job:</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">scancel</span> <span class="op">&lt;</span>job_id<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>More info: <a href="https://docs.vscentrum.be/compute/jobs/running_jobs.html">VSC Running Jobs in Slurm</a></p></li>
+</ul></li>
+</ul>
+<hr>
+</section>
+<section id="linux-command-line-essentials" class="level1">
+<h1>6. Linux Command-Line Essentials</h1>
+<p>You’ll do almost everything with commands in the terminal. Here are some that are commonly used:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>ls</code></td>
+<td>List files</td>
+</tr>
+<tr class="even">
+<td><code>cd &lt;dir&gt;</code></td>
+<td>Change directory</td>
+</tr>
+<tr class="odd">
+<td><code>mkdir &lt;dir&gt;</code></td>
+<td>Make new directory</td>
+</tr>
+<tr class="even">
+<td><code>cp</code></td>
+<td>Copy files</td>
+</tr>
+<tr class="odd">
+<td><code>mv</code></td>
+<td>Move/rename files</td>
+</tr>
+<tr class="even">
+<td><code>rm</code></td>
+<td>Remove (delete) files</td>
+</tr>
+<tr class="odd">
+<td><code>nano</code></td>
+<td>Simple text editor</td>
+</tr>
+<tr class="even">
+<td><code>chmod</code></td>
+<td>Change permissions</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p><strong>Tip:</strong> Organize your files into folders for code, data, logs, and results.</p>
+</blockquote>
+<hr>
+</section>
+<section id="software-modules" class="level1">
+<h1>7. Software Modules</h1>
+<p>On the VSC, you load software using a module system. You can do this using the commands below:</p>
+<pre><code>```bash
+module avail           # See available modules
+module load Python/3.10.4-GCCcore-11.3.0
+module list            # Show loaded modules
+module purge           # Unload all modules
+```</code></pre>
+<ul>
+<li>For some projects like in our case we can also use <strong>Conda</strong> or Python virtual environments.</li>
 </ul>
 <hr>
 </section>
 <section id="useful-links" class="level1">
 <h1>Useful Links</h1>
 <ul>
-<li><a href="https://www.vscentrum.be/en/">VSC Portal</a></li>
-<li><a href="https://docs.vscentrum.be/">VSC Documentation</a></li>
-<li><a href="https://www.vscentrum.be/en/user-info/batch-jobs">Batch Jobs &amp; SLURM</a></li>
-<li><a href="https://www.vscentrum.be/en/user-info/files-and-data">Data Storage</a></li>
-<li><a href="https://www.vscentrum.be/en/access/vsc-projects">Requesting Resources</a></li>
-<li><a href="https://www.vscentrum.be/en/user-info/support">VSC Support</a></li>
+<li><a href="https://ondemand.hpc.kuleuven.be/pun/sys/dashboard/">VSC Portal Dashboard</a></li>
+<li><a href="https://docs.vscentrum.be/compute/index.html">VSC Compute</a></li>
+<li><a href="https://docs.vscentrum.be/data/index.html">VSC Data</a></li>
 </ul>
 <hr>
-</section>
-<section id="tips" class="level1">
-<h1>Tips</h1>
-<ul>
-<li>Organize your project with separate folders for code, data, and logs.</li>
-<li>Monitor your credit and storage usage.</li>
-<li>Contact your institution’s VSC support desk for advanced assistance.</li>
-</ul>
 
 
 </section>

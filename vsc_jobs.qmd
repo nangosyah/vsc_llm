@@ -3,85 +3,29 @@ title: "Best Practices for Running Models on HPC"
 format: html
 ---
 
-# Introduction
-
-- High-Performance Computing (HPC) enables efficient training and evaluation of large models.
-- Following best practices maximizes resource usage, minimizes job failures, and ensures reproducibility.
-
----
-
-# 1. Resource Management
-
-- Request only the resources you need (CPUs, GPUs, memory, wall time).
-- Use benchmarking and profiling to estimate resource requirements.
-- Monitor your jobs and adjust future requests accordingly.
-- Release resources as soon as jobs finish.
-
----
-
-# 2. Job Scheduling and SLURM Usage
-
-- Use SLURM array jobs for large-scale parameter sweeps or cross-validation.
-- Name your jobs descriptively with `#SBATCH --job-name`.
-- Organize job outputs and logs using `#SBATCH --output` and subfolders.
-- Regularly check job status (`squeue -u $USER`) and manage queued/running jobs (`scancel`).
-
----
-
-# 3. Data Handling
-
-- Store large datasets in the appropriate HPC data storage (e.g., `$VSC_DATA`).
-- Avoid reading/writing directly to your home directory for big files.
-- Use the scratch directory (`$VSC_SCRATCH`) for temporary files and clean up after jobs finish.
-- Pre-stage data before computation; transfer results after job completion.
+- **Request Only What You Need:**  
+  Estimate resources and adjust based on past jobs.
+  
+- **Organize Jobs & Logs:**  
+  Use descriptive job names and structured output folders.
+  
+- **Use the Right Storage:**  
+  Place large and temporary files in `$VSC_DATA` and `$VSC_SCRATCH`.
+  
+- **Manage Environments:**  
+  Use modules/conda and document dependencies. Version-control your code.
+  
+- **Promote Reproducibility:**  
+  Save SLURM scripts, configs, and note job parameters.
+  
+- **Debug Efficiently:**  
+  Check logs, use interactive/test jobs, and fail fast on errors.
+  
+- **Document & Share:**  
+  Keep READMEs and notebooks. Organize scripts, configs, and results.
+  
+- **Clean Up:**  
+  Remove unused data and files regularly.
 
 ---
-
-# 4. Code and Environment Management
-
-- Use environment modules or containers to manage dependencies.
-- Document your environment (module load commands, requirements.txt, etc.).
-- Use version control (e.g., Git) for all code.
-- Test your code with small jobs before scaling up.
-
----
-
-# 5. Reproducibility
-
-- Record job parameters, random seeds, software versions, and output locations.
-- Store SLURM scripts and configuration files with your results.
-- Use automated logging and metadata files.
-
----
-
-# 6. Error Handling and Debugging
-
-- Use `--mail-type=FAIL` in SLURM to get failure notifications.
-- Check logs regularly for errors and warnings.
-- Start with interactive sessions for debugging before submitting large jobs.
-- Write jobs to fail fast if requirements are not met (e.g., missing data or modules).
-
----
-
-# 7. Collaboration and Documentation
-
-- Document all steps in a README or as Quarto/RMarkdown notebooks.
-- Organize scripts, configs, and data in clear directories.
-- Share and backup results promptly.
-
----
-
-# Useful Links
-
-- [VSC User Documentation](https://docs.vscentrum.be/)
-- [SLURM Job Submission Guide](https://www.vscentrum.be/en/user-info/batch-jobs)
-- [Data Storage Guidelines](https://www.vscentrum.be/en/user-info/files-and-data)
-
----
-
-# Tips
-
-- Always do a test run before scaling up.
-- Clean up your data and scratch spaces.
-- Communicate with your HPC support team for questions or unusual errors.
 
