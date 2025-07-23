@@ -24,10 +24,8 @@ The workflow illustrates how to:
 - Configure and prepare the compute environment.
 - Download and manage open-source LLMs for clinical tasks.
 - Orchestrate compute jobs using SLURM (including ready-to-use script templates)
-- Process LLM prompts and collect results.
-- Extract and structure outputs for analysis (JSONL/Parquet).
+- Process LLM prompts and collect results for downstream analysis.
 - Apply best practices for running large-scale jobs on HPC
-- Address basic ethical considerations in generative AI for healthcare
 
 ---
 
