@@ -202,7 +202,7 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Running LLMs on HPC",
+    "title": "Running Large Language Models on Vlaams Super Computer (VSC)",
     "section": "",
     "text": "This site is a practical guide for deploying, managing, and analyzing large language models (LLMs) using the Vlaams Supercomputer (VSC).\nThis project was completed as part of my internship, under the guidance of Prof. Dr. Dirk Valkenborg and Jimmy Schepers.\nTheir support and mentorship were instrumental in bringing this work to fruition.",
     "crumbs": [
@@ -212,7 +212,7 @@
   {
     "objectID": "index.html#project-context",
     "href": "index.html#project-context",
-    "title": "Running LLMs on HPC",
+    "title": "Running Large Language Models on Vlaams Super Computer (VSC)",
     "section": "",
     "text": "This site is a practical guide for deploying, managing, and analyzing large language models (LLMs) using the Vlaams Supercomputer (VSC).\nThis project was completed as part of my internship, under the guidance of Prof. Dr. Dirk Valkenborg and Jimmy Schepers.\nTheir support and mentorship were instrumental in bringing this work to fruition.",
     "crumbs": [
@@ -222,7 +222,7 @@
   {
     "objectID": "index.html#what-youll-find-here",
     "href": "index.html#what-youll-find-here",
-    "title": "Running LLMs on HPC",
+    "title": "Running Large Language Models on Vlaams Super Computer (VSC)",
     "section": "What You’ll Find Here",
     "text": "What You’ll Find Here\n\nProject Overview:\nUnderstand the goals and scope of this project.\nHPC & LLM Basics:\nLearn foundational concepts about high-performance computing and how to run LLMs.\nEnvironment Setup:\nStep-by-step instructions for setting up your VSC environment, downloading models, and managing dependencies.\nRunning Jobs:\nHow to launch SLURM jobs, organize scripts, and capture logs/output.\nBest Practices:\nProven tips for efficient, reproducible, and scalable research on HPC.",
     "crumbs": [
@@ -232,7 +232,7 @@
   {
     "objectID": "index.html#about-vsc",
     "href": "index.html#about-vsc",
-    "title": "Running LLMs on HPC",
+    "title": "Running Large Language Models on Vlaams Super Computer (VSC)",
     "section": "About VSC",
     "text": "About VSC\nThe Vlaams SuperComputer (VSC) provides powerful computing resources for research and innovation in Flanders.\nLearn more: VSC User Portal",
     "crumbs": [
@@ -242,7 +242,7 @@
   {
     "objectID": "index.html#acknowledgments",
     "href": "index.html#acknowledgments",
-    "title": "Running LLMs on HPC",
+    "title": "Running Large Language Models on Vlaams Super Computer (VSC)",
     "section": "Acknowledgments",
     "text": "Acknowledgments\nI sincerely thank Prof. Dr. Dirk Valkenborg and Jimmy Schepers for their exceptional mentorship throughout this project.",
     "crumbs": [
