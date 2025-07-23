@@ -1,5 +1,5 @@
 ---
-title: "Running LLMs on HPC"
+title: "Running Large Language Models on Vlaams Super Computer (VSC)"
 author: "Tom Wellard Nangosyah"
 date: "2025-07-20"
 format: html

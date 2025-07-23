@@ -252,7 +252,7 @@ module list            # Show loaded modules
 module purge           # Unload all modules
 ```
     
-- For some projects like in our case we can also use **Conda** or Python virtual environments.
+For some projects like in our case we can also use Conda or Python virtual environments.
 
 ---
 
