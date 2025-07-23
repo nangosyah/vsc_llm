@@ -245,12 +245,12 @@ You’ll do almost everything with commands in the terminal. Here are some that 
 
 On the VSC, you load software using a module system. You can do this using the commands below:
    
-    ```bash
-    module avail           # See available modules
-    module load Python/3.10.4-GCCcore-11.3.0
-    module list            # Show loaded modules
-    module purge           # Unload all modules
-    ```
+```bash
+module avail           # See available modules
+module load Python/3.10.4-GCCcore-11.3.0
+module list            # Show loaded modules
+module purge           # Unload all modules
+```
     
 - For some projects like in our case we can also use **Conda** or Python virtual environments.
 
