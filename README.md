@@ -6,7 +6,7 @@ Structured outputs (JSONL/Parquet) enable downstream data analysis.
 ## What this page provides
 
 - A short, beginner-friendly tutorial on VSC: how to log in, set up Python, load modules, and submit jobs with SLURM.
-- Ready-to-use template files (config file, example runner, and job script).
+- Template files (config file, example runner, and job script).
 
 ## How it works
 
