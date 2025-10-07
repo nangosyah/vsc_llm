@@ -15,6 +15,6 @@ You supply a list of ICD codes. The system queries an LLM for the typical sympto
 ## Prerequisites
 
 - A VSC account
-- A Python environment (conda or venv)
+- A Python environment
 - An open-source model to use
 - Your ICD code list
